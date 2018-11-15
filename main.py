@@ -1,5 +1,13 @@
-from individual import Individual
+import numpy as np
+from jggsystem import JGGSystem
 
-indiv = Individual(5)
+def sphere(x):
+	shifted = x * 10.24 - 5.12
+	return np.sum(shifted ** 2)
 
-print(indiv)
+n = 20
+system = JGGSystem(sphere, n, 6 * n, n + 1, 6 * n)
+
+system.step(30300)
+
+print(system.get_best_evaluation_value());
