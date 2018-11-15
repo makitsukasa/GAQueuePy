@@ -76,9 +76,8 @@ if __name__ == '__main__':
 		op
 	)
 
-	system.step(800)
+	system.step(1000)
 
 	system.history.sort(key = lambda i: i.fitness)
 	print(system.history[0].fitness)
 	# 10e-7 or lower
-

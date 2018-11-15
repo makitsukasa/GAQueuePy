@@ -3,9 +3,9 @@ from individual import Individual
 import crossoverer
 
 class JGGSystem(object):
-	def __init__(self, func, n, npop, npar, nchi):
+	def __init__(self, problem, n, npop, npar, nchi):
 		self.n = n
-		self.func = func
+		self.problem = problem
 		self.children = []
 		self.npop = npop
 		self.npar = npar
@@ -29,7 +29,7 @@ class JGGSystem(object):
 		return ret
 
 	def evaluate(self, indiv):
-		indiv.f = self.func(indiv.gene)
+		indiv.f = self.problem(indiv.gene)
 		self.children.append(indiv)
 		return indiv
 

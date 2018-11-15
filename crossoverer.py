@@ -8,7 +8,7 @@ def rex(parents, nchi = None):
 	g = np.mean(np.array([parent.gene for parent in parents]), axis=0)
 	children = [Individual(n) for i in range(nchi)]
 	for child in children:
-		epsilon = np.random.uniform(-np.sqrt(3 / (mu)), np.sqrt(3 / (mu)), mu)
+		epsilon = np.random.uniform(-np.sqrt(3 / mu), np.sqrt(3 / mu), mu)
 		for i in range(n):
 			child.gene[i] = g[i]
 			for j in range(mu):
