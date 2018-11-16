@@ -18,8 +18,11 @@ class Individual:
 
 	def __str__(self):
 		return "{r}/{f}({b}) {g}".format(
-			r = self.raw_fitness,
-			f = self.fitness,
-			b = self.birth_year,
-			g = self.gene
+			r = 'None' if self.raw_fitness is None else '{:.4}'.format(self.raw_fitness),
+			f = 'None' if self.fitness     is None else '{:.4}'.format(self.fitness),
+			b = 'None' if self.birth_year  is None else self.birth_year,
+			g = ','.join(['{:.4}'.format(g) for g in self.gene])
 		)
+
+if __name__ == '__main__':
+	import main

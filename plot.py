@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 import numpy as np
 import matplotlib as mpl
 
@@ -14,6 +13,3 @@ def plot(step_count, history, fmt = 'b-', label = ''):
 	f_raw = [i.fitness for i in history]
 	f = np.convolve(f_raw, np.ones(v) / v, mode = 'vaild')
 	plt.plot(x[:len(f)], f, fmt, label = label)
-
-if __name__ == '__main__':
-	import main
