@@ -29,16 +29,19 @@ gaqsys = GAQSystem(problem, 0, [Individual(n) for i in range(6 * n)], gaq_op)
 gaq2sys = GAQSystem(problem, 0, [Individual(n) for i in range(6 * n)], gaq2_op)
 
 jggsys.step(step_count)
+jggsys.calc_raw_fitness(problem)
 best = jggsys.get_best_individual()
 print(best);
 plot(step_count, jggsys.history, fmt = 'm-', label = 'JGG:{:.3f}'.format(best.fitness))
 
 gaqsys.step(step_count)
+gaqsys.calc_raw_fitness(problem)
 best = gaqsys.get_best_individual()
 print(best);
 plot(step_count, gaqsys.history, fmt = 'b-', label = 'GAQ:{:.3f}'.format(best.fitness))
 
 gaq2sys.step(step_count)
+gaq2sys.calc_raw_fitness(problem)
 best = gaq2sys.get_best_individual()
 print(best);
 plot(step_count, gaq2sys.history, fmt = 'c-', label = 'GAQ2:{:.3f}'.format(best.fitness))

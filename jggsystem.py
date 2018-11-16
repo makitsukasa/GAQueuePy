@@ -36,7 +36,7 @@ class JGGSystem(object):
 		return indiv
 
 	def get_best_individual(self):
-		self.history.sort(key=lambda s: s.fitness)
+		self.history.sort(key=lambda s: s.raw_fitness)
 		return self.history[0]
 
 	def step(self, count = 1):
@@ -53,6 +53,10 @@ class JGGSystem(object):
 				self.children_before_eval = crossoverer.rex(taken, self.nchi)
 				for i in self.children_before_eval:
 					i.birth_year = self.age
+
+	def calc_raw_fitness(self, problem):
+		for i in self.history:
+			i.raw_fitness = problem(i.gene)
 
 if __name__ == '__main__':
 
