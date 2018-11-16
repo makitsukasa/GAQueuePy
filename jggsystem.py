@@ -11,6 +11,7 @@ class JGGSystem(object):
 		self.npar = npar
 		self.nchi = nchi
 		self.history = []
+		self.age = 0
 
 		self.population = [Individual(self.n) for i in range(npop)]
 
@@ -40,6 +41,7 @@ class JGGSystem(object):
 
 	def step(self, count = 1):
 		for i in range(count):
+			self.age += 1
 			evaluated = self.evaluate(self.children_before_eval.pop(-1))
 			self.children_after_eval.append(evaluated)
 			self.history.append(evaluated)
@@ -49,6 +51,8 @@ class JGGSystem(object):
 				self.children_after_eval.clear()
 				taken = self.select_parents()
 				self.children_before_eval = crossoverer.rex(taken, self.nchi)
+				for i in self.children_before_eval:
+					i.birth_year = self.age
 
 if __name__ == '__main__':
 
