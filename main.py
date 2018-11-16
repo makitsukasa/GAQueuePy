@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
+import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
 from individual import Individual
 import crossoverer
 from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
+from plot import plot
 
 def gaq_op(x):
 	x.sort(key=lambda i: i.fitness)
@@ -13,23 +17,33 @@ def gaq_op(x):
 def gaq2_op(x):
 	x.sort(key = lambda i: i.fitness)
 	parents = x[:n]
-	x.sort(key = lambda i: i.birth_year if i.birth_year is not None else -1)
-	elders = x[:int(len(x) * 0.1)]
-	elders.sort(key = lambda i: i.fitness)
-	parents.extend(elders[:1])
+	np.random.shuffle(x)
+	parents.extend(x[:1])
 	return crossoverer.rex(parents)
 
 n = 20
+step_count = 27200
 problem = sphere
 jggsys = JGGSystem(problem, n, 6 * n, n + 1, 6 * n)
-gaqsys = GAQSystem(problem, 0, [Individual(n) for i in range(15 * n)], gaq_op)
-gaq2sys = GAQSystem(problem, 0, [Individual(n) for i in range(15 * n)], gaq2_op)
+gaqsys = GAQSystem(problem, 0, [Individual(n) for i in range(6 * n)], gaq_op)
+gaq2sys = GAQSystem(problem, 0, [Individual(n) for i in range(6 * n)], gaq2_op)
 
-jggsys.step(27200)
-print(jggsys.get_best_individual());
+jggsys.step(step_count)
+best = jggsys.get_best_individual()
+print(best);
+plot(step_count, jggsys.history, fmt = 'm-', label = '既存手法:{:.3f}'.format(best.fitness))
 
-gaqsys.step(27200)
-print(gaqsys.get_best_individual());
+gaqsys.step(step_count)
+best = gaqsys.get_best_individual()
+print(best);
+plot(step_count, gaqsys.history, fmt = 'b-', label = '提案手法1:{:.3f}'.format(best.fitness))
 
-gaq2sys.step(27200)
-print(gaq2sys.get_best_individual());
+gaq2sys.step(step_count)
+best = gaq2sys.get_best_individual()
+print(best);
+plot(step_count, gaq2sys.history, fmt = 'c-', label = '提案手法2:{:.3f}'.format(best.fitness))
+
+plt.axis(xmin = 0, ymin = 0)
+plt.title('{f}(D{d}), {s}'.format(f = problem.__name__, d = n, s = step_count))
+plt.legend()
+plt.show()

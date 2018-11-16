@@ -1,12 +1,19 @@
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import numpy as np
+import matplotlib as mpl
 
-x = np.linspace(0, 10, 100)
-y = np.sin(x) + np.random.randn(100) * 0.2
+font = {"family":"Noto Sans JP Regular"}
+mpl.rc('font', **font)
 
-y2 = np.convolve(y, np.ones(5) / 5, mode = 'same')
+def plot(step_count, history, fmt = 'b-', label = ''):
+	x = range(step_count)
+	v = step_count // 100
+	np.random.shuffle(history)
+	history.sort(key = lambda i: i.birth_year if i.birth_year is not None else -1)
+	f_raw = [i.fitness for i in history]
+	f = np.convolve(f_raw, np.ones(v) / v, mode = 'vaild')
+	plt.plot(x[:len(f)], f, fmt, label = label)
 
-plt.plot(x, y, 'k-', label = 'original')
-plt.plot(x, y2, 'b-', label = 'moving average')
-plt.legend()
-plt.show()
+if __name__ == '__main__':
+	import main
