@@ -24,12 +24,12 @@ class JGGSystem(object):
 		return self.parents
 
 	def survival_selection(self, evaluated):
-		evaluated.sort(key=lambda child: child.f)
+		evaluated.sort(key=lambda child: child.fitness)
 		ret = evaluated[:self.npar]
 		return ret
 
 	def evaluate(self, indiv):
-		indiv.f = self.problem(indiv.gene)
+		indiv.fitness = self.problem(indiv.gene)
 		self.children.append(indiv)
 		return indiv
 
