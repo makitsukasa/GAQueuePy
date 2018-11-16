@@ -41,6 +41,10 @@ class GAQSystem(object):
 		indiv.fitness = self.problem(indiv.gene)
 		return indiv
 
+	def get_best_individual(self):
+		self.history.sort(key=lambda s: s.fitness)
+		return self.history[0]
+
 	def step(self, count = 1):
 		for i in range(count):
 			self.age += 1

@@ -10,6 +10,7 @@ class JGGSystem(object):
 		self.npop = npop
 		self.npar = npar
 		self.nchi = nchi
+		self.history = []
 
 		self.population = [Individual(self.n) for i in range(npop)]
 
@@ -33,14 +34,15 @@ class JGGSystem(object):
 		self.children.append(indiv)
 		return indiv
 
-	def get_best_evaluation_value(self):
-		self.population.sort(key=lambda s: s.f)
-		return self.population[0].f, self.population[0].gene
+	def get_best_individual(self):
+		self.history.sort(key=lambda s: s.fitness)
+		return self.history[0]
 
 	def step(self, count = 1):
 		for i in range(count):
 			evaluated = self.evaluate(self.children_before_eval.pop(-1))
 			self.children_after_eval.append(evaluated)
+			self.history.append(evaluated)
 			if len(self.children_before_eval) == 0:
 				new_generation = self.survival_selection(self.children_after_eval)
 				self.population.extend(new_generation)
