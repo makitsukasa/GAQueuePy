@@ -14,7 +14,7 @@ class Individual:
 
 		self.fitness = None
 		self.raw_fitness = None
-		self.birth_year = None
+		self.birth_year = 0
 
 	def __str__(self):
 		return "{r}/{f}({b}) {g}".format(
