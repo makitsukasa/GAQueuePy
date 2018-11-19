@@ -26,8 +26,8 @@ def gaq2_op(x):
 
 def gaq3_op(x):
 	x.sort(key = lambda i: i.fitness)
-	parents = x[:n - 2]
-	for i in range(3):
+	parents = x[:n - 1]
+	for i in range(2):
 		rand = np.random.randint(len(x))
 		parents.append(x[rand])
 	return crossoverer.rex(parents)
@@ -36,7 +36,7 @@ n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 1000
+step_count = 27200
 problem = sphere
 
 jggsys = JGGSystem(problem, n, npop, npar, nchi)
