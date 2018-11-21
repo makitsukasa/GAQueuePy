@@ -18,3 +18,19 @@ def gmm(x):
 			exponent -= ((shifted[j] - MU[i][j % 4]) ** 2) / (2 * SQ_SIGMA[i])
 		ans += A[i] * np.exp(exponent)
 	return -ans
+
+count = 0
+mean = 0.0
+
+def rough_gmm(x):
+	global count
+	global mean
+	val = gmm(x)
+	mean = (mean * count + val) / (count + 1)
+	count += 1
+	if abs(mean - val) < 0.01:
+		return 0.0
+	elif mean < val:
+		return 1.0
+	else:
+		return -1.0

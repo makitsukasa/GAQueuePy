@@ -8,7 +8,7 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
-from problem.gmm.gmm import gmm
+from problem.gmm.gmm import gmm, rough_gmm
 from plot import plot
 
 def gaq_plain_op(x):
@@ -51,10 +51,12 @@ def gaq_random_range_op(x):
 
 n = 10
 npop = 6 * n
-npar = n + 1
-nchi = 6 * n
-step_count = 2000
-problem = gmm
+npar = 4
+nchi = 16
+step_count = 10000
+loop_count = 100
+problem = rough_gmm
+raw_problem = gmm
 gaqsystem_opt_list = [
 	["plain", "m"],
 	["always_random", "b"],
@@ -62,28 +64,39 @@ gaqsystem_opt_list = [
 	["fixed_range", "c"],
 	["random_range", "g"],
 ]
-randseed = np.random.randint(0x7fffffff)
-
-np.random.seed(randseed)
-jggsys = JGGSystem(problem, n, npop, npar, nchi)
-jggsys.step(step_count)
-jggsys.calc_raw_fitness(problem)
-best = jggsys.get_best_individual()
-print(best);
-plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.fitness))
-
+best_list = {"jgg" : 0}
 for opt in gaqsystem_opt_list:
 	name, color = opt
-	exec("op = gaq_{}_op".format(name))
-	np.random.seed(randseed)
-	gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
-	gaq_sys.step(step_count)
-	gaq_sys.calc_raw_fitness(problem)
-	best = gaq_sys.get_best_individual()
-	print(best);
-	plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.fitness))
+	best_list[name] = 0
 
-# plt.axis(xmin = 0, ymin = 0)
-plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
-plt.legend()
-plt.show()
+for _ in range(loop_count):
+	randseed = np.random.randint(0x7fffffff)
+
+	np.random.seed(randseed)
+	jggsys = JGGSystem(problem, n, npop, npar, nchi)
+	jggsys.step(step_count)
+	jggsys.calc_raw_fitness(raw_problem)
+	best = jggsys.get_best_individual()
+	# print(best);
+	best_list["jgg"] += best.raw_fitness / loop_count
+	# plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
+
+	for opt in gaqsystem_opt_list:
+		name, color = opt
+		exec("op = gaq_{}_op".format(name))
+		np.random.seed(randseed)
+		gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
+		gaq_sys.step(step_count)
+		gaq_sys.calc_raw_fitness(raw_problem)
+		best = gaq_sys.get_best_individual()
+		# print(best);
+		best_list[name] += best.raw_fitness / loop_count
+		# plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.raw_fitness))
+
+	# plt.axis(xmin = 0, ymin = 0)
+	# plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
+	# plt.legend()
+	# plt.show()
+
+for key, ave in best_list.items():
+	print(key, ave)
