@@ -8,6 +8,7 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
+from problem.gmm.gmm import gmm
 from plot import plot
 
 def gaq_plain_op(x):
@@ -23,7 +24,7 @@ def gaq_always_random_op(x):
 	return crossoverer.rex(parents)
 
 def gaq_rarely_random_op(x):
-	if np.random.random() > 0.5:
+	if np.random.random() > 0.1:
 		return gaq_always_random_op(x)
 	else:
 		return gaq_plain_op(x)
@@ -48,12 +49,12 @@ def gaq_random_range_op(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
-n = 20
+n = 10
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 27200
-problem = sphere
+step_count = 2000
+problem = gmm
 gaqsystem_opt_list = [
 	["plain", "m"],
 	["always_random", "b"],
@@ -82,7 +83,7 @@ for opt in gaqsystem_opt_list:
 	print(best);
 	plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.fitness))
 
-plt.axis(xmin = 0, ymin = 0)
+# plt.axis(xmin = 0, ymin = 0)
 plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
 plt.legend()
 plt.show()
