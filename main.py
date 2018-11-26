@@ -8,7 +8,7 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
-from problem.gmm.gmm import gmm, rough_gmm
+from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_disc
 from plot import plot
 
 def gaq_plain_op(x):
@@ -54,8 +54,8 @@ npop = 6 * n
 npar = 4
 nchi = 16
 step_count = 10000
-loop_count = 100
-problem = rough_gmm
+loop_count = 1
+problem = rough_gmm_disc
 raw_problem = gmm
 gaqsystem_opt_list = [
 	["plain", "m"],
@@ -79,7 +79,7 @@ for _ in range(loop_count):
 	best = jggsys.get_best_individual()
 	# print(best);
 	best_list["jgg"] += best.raw_fitness / loop_count
-	# plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
+	plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
 	for opt in gaqsystem_opt_list:
 		name, color = opt
@@ -91,12 +91,12 @@ for _ in range(loop_count):
 		best = gaq_sys.get_best_individual()
 		# print(best);
 		best_list[name] += best.raw_fitness / loop_count
-		# plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.raw_fitness))
+		plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.raw_fitness))
 
 	# plt.axis(xmin = 0, ymin = 0)
-	# plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
-	# plt.legend()
-	# plt.show()
+	plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
+	plt.legend()
+	plt.show()
 
 for key, ave in best_list.items():
 	print(key, ave)
