@@ -79,7 +79,8 @@ for _ in range(loop_count):
 	best = jggsys.get_best_individual()
 	# print(best);
 	best_list["jgg"] += best.raw_fitness / loop_count
-	plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
+	if loop_count == 1:
+		plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
 	for opt in gaqsystem_opt_list:
 		name, color = opt
@@ -91,12 +92,14 @@ for _ in range(loop_count):
 		best = gaq_sys.get_best_individual()
 		# print(best);
 		best_list[name] += best.raw_fitness / loop_count
-		plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.raw_fitness))
+		if loop_count == 1:
+			plot(step_count, gaq_sys.history, color = color, label = 'GAQ_{} : {:.10f}'.format(name, best.raw_fitness))
 
-	# plt.axis(xmin = 0, ymin = 0)
-	plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
-	plt.legend()
-	plt.show()
+	if loop_count == 1:
+		# plt.axis(xmin = 0, ymin = 0)
+		plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
+		plt.legend()
+		plt.show()
 
 for key, ave in best_list.items():
 	print(key, ave)
