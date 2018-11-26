@@ -22,11 +22,11 @@ class GAQSystem(object):
 	             * * * * * * * * * * * * *
 
 	these have some options to choose from
-			- size of gene
-			- evaluate  function
-			- select    function
-			- crossover function
-			- mutate    function
+		- size of gene
+		- evaluate  function
+		- select    function
+		- crossover function
+		- mutate    function
 	"""
 
 	def __init__(self, problem, minQueueSize, firstGeneration, op):

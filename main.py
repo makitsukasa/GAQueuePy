@@ -53,10 +53,12 @@ n = 10
 npop = 6 * n
 npar = 4
 nchi = 16
-step_count = 10000
+step_count = 400
 loop_count = 100
-problem = rough_gmm_ave
+problem = rough_gmm_disc
 raw_problem = gmm
+title = '{f}(D{d}), {npop},{npar},{nchi},{s}'.format(
+	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count)
 gaqsystem_opt_list = [
 	["plain", "m"],
 	["always_random", "b"],
@@ -99,9 +101,10 @@ for _ in range(loop_count):
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
-		plt.title('{f}(D{d}), {npop},{npar},{s}'.format(f = problem.__name__, d = n, npop = npop, npar = npar, s = step_count))
+		plt.title(title)
 		plt.legend()
 		plt.show()
 
+print(title)
 for key, ave in best_list.items():
 	print(key, ave)
