@@ -23,6 +23,14 @@ count = 0
 mean = 0.0
 disc_sum = 0.0
 
+def init_rough_gmm():
+	global count
+	global mean
+	global disc_sum
+	count = 0
+	mean = 0.0
+	disc_sum = 0.0
+
 def rough_gmm_ave(x):
 	global count
 	global mean
@@ -42,11 +50,10 @@ def rough_gmm_disc(x):
 	disc_rate = 0.2
 	val = gmm(x)
 	ret = 0.0
-	new_disc_sum = (val + disc_sum * 2 * disc_rate) / 2
-	if abs(new_disc_sum - disc_sum) > 0.01:
-		if new_disc_sum > disc_sum:
-			ret = 1.0
-		else:
-			ret = -1.0
+	new_disc_sum = val + disc_sum * 2 * disc_rate
+	if new_disc_sum > disc_sum:
+		ret = 1.0
+	else:
+		ret = -1.0
 	disc_sum = new_disc_sum
 	return ret

@@ -8,7 +8,7 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
-from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_disc
+from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_disc, init_rough_gmm
 from plot import plot
 
 def gaq_plain_op(x):
@@ -54,8 +54,8 @@ npop = 6 * n
 npar = 4
 nchi = 16
 step_count = 10000
-loop_count = 1
-problem = rough_gmm_disc
+loop_count = 100
+problem = rough_gmm_ave
 raw_problem = gmm
 gaqsystem_opt_list = [
 	["plain", "m"],
@@ -72,6 +72,7 @@ for opt in gaqsystem_opt_list:
 for _ in range(loop_count):
 	randseed = np.random.randint(0x7fffffff)
 
+	init_rough_gmm()
 	np.random.seed(randseed)
 	jggsys = JGGSystem(problem, n, npop, npar, nchi)
 	jggsys.step(step_count)
@@ -85,6 +86,7 @@ for _ in range(loop_count):
 	for opt in gaqsystem_opt_list:
 		name, color = opt
 		exec("op = gaq_{}_op".format(name))
+		init_rough_gmm()
 		np.random.seed(randseed)
 		gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
 		gaq_sys.step(step_count)
