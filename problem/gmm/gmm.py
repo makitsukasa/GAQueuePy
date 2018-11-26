@@ -50,8 +50,10 @@ def rough_gmm_disc(x):
 	disc_rate = 0.2
 	val = gmm(x)
 	ret = 0.0
-	new_disc_sum = val + disc_sum * 2 * disc_rate
-	if new_disc_sum > disc_sum:
+	new_disc_sum = val + disc_sum * disc_rate
+	if abs(new_disc_sum - disc_sum) < 0.01:
+		ret = 0.0
+	elif new_disc_sum > disc_sum:
 		ret = 1.0
 	else:
 		ret = -1.0
