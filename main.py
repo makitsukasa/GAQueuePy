@@ -8,7 +8,7 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
-from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_disc, init_rough_gmm
+from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
 from plot import plot
 
 def gaq_plain_op(x):
@@ -55,7 +55,7 @@ npar = 4
 nchi = 16
 step_count = 400
 loop_count = 100
-problem = rough_gmm_disc
+problem = rough_gmm_weighted_ave
 raw_problem = gmm
 title = '{f}(D{d}), {npop},{npar},{nchi},{s}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count)

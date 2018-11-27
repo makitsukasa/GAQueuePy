@@ -44,18 +44,18 @@ def rough_gmm_ave(x):
 	else:
 		return -1.0
 
-# approx : sum(k:0->n) r**k is 2
-def rough_gmm_disc(x):
+def rough_gmm_weighted_ave(x):
 	global disc_sum
-	disc_rate = 0.2
+	global count
+	r = 0.2
 	val = gmm(x)
 	ret = 0.0
-	new_disc_sum = val + disc_sum * disc_rate
-	if abs(new_disc_sum - disc_sum) < 0.01:
+	if abs(val - disc_sum) < 0.01:
 		ret = 0.0
-	elif new_disc_sum > disc_sum:
+	elif val > disc_sum:
 		ret = 1.0
 	else:
 		ret = -1.0
-	disc_sum = new_disc_sum
+	disc_sum = ((1 - r) * val + r * disc_sum * (1 - r ** count)) / (1 - r ** (count + 1))
+	count += 1
 	return ret
