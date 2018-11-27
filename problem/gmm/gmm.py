@@ -35,27 +35,25 @@ def rough_gmm_ave(x):
 	global count
 	global mean
 	val = gmm(x)
+	ret = -1.0
+	if abs(mean - val) < 0.01:
+		ret = 0.0
+	elif mean < val:
+		ret = 1.0
 	mean = (mean * count + val) / (count + 1)
 	count += 1
-	if abs(mean - val) < 0.01:
-		return 0.0
-	elif mean < val:
-		return 1.0
-	else:
-		return -1.0
+	return ret
 
 def rough_gmm_weighted_ave(x):
 	global disc_sum
 	global count
 	r = 0.2
 	val = gmm(x)
-	ret = 0.0
+	ret = -1.0
 	if abs(val - disc_sum) < 0.01:
 		ret = 0.0
 	elif val > disc_sum:
 		ret = 1.0
-	else:
-		ret = -1.0
 	disc_sum = ((1 - r) * val + r * disc_sum * (1 - r ** count)) / (1 - r ** (count + 1))
 	count += 1
 	return ret
