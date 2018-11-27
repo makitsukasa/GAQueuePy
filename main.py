@@ -49,6 +49,9 @@ def gaq_random_range_op(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
+def init():
+	init_rough_gmm()
+
 n = 10
 npop = 6 * n
 npar = 4
@@ -74,7 +77,7 @@ for opt in gaqsystem_opt_list:
 for _ in range(loop_count):
 	randseed = np.random.randint(0x7fffffff)
 
-	init_rough_gmm()
+	init()
 	np.random.seed(randseed)
 	jggsys = JGGSystem(problem, n, npop, npar, nchi)
 	jggsys.step(step_count)
@@ -88,7 +91,7 @@ for _ in range(loop_count):
 	for opt in gaqsystem_opt_list:
 		name, color = opt
 		exec("op = gaq_{}_op".format(name))
-		init_rough_gmm()
+		init()
 		np.random.seed(randseed)
 		gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
 		gaq_sys.step(step_count)
