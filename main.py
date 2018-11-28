@@ -55,13 +55,13 @@ def init():
 n = 10
 npop = 6 * n
 npar = 4
-nchi = 16
+nchi = 20
 step_count = 400
-loop_count = 100
-problem = rough_gmm_weighted_ave
+loop_count = 1000
+problem = rough_gmm_ave
 raw_problem = gmm
-title = '{f}(D{d}), {npop},{npar},{nchi},{s}'.format(
-	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count)
+title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
+	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
 	["plain", "m"],
 	["always_random", "b"],
@@ -73,6 +73,8 @@ best_list = {"jgg" : 0}
 for opt in gaqsystem_opt_list:
 	name, color = opt
 	best_list[name] = 0
+
+print(title)
 
 for _ in range(loop_count):
 	randseed = np.random.randint(0x7fffffff)
@@ -108,6 +110,5 @@ for _ in range(loop_count):
 		plt.legend()
 		plt.show()
 
-print(title)
 for key, ave in best_list.items():
 	print(key, ave)
