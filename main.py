@@ -49,8 +49,22 @@ def gaq_random_range_op(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
+def gaq_gradient(x):
+	initial = [i for i in x if i.birth_year == 0]
+	x.sort(key = lambda i: i.birth_year)
+	most_recent_birth_year = x[0].birth_year
+	most_recent = [i for i in x if i.birth_year == recent_birth_year]
+	left = [i for i in x if i.birth_year != recent_birth_year]
+	second_recent_birth_year = x[0].birth_year
+	second_recent = [i for i in x if i.birth_year == second_recent_birth_year]
+
+	initial_fitness = np.average([i.fitness for i in initial])
+	first_fitness = np.average([i.fitness for i in initial])
+	second_fitness = np.average([i.fitness for i in initial])
+
 def init():
 	init_rough_gmm()
+	max_gradient = 0.0
 
 n = 10
 npop = 6 * n
