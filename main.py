@@ -11,11 +11,11 @@ from problem.frontier.rastrigin import rastrigin
 from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
 from plot import plot
 
-def gaq_plain_op(x):
+def gaq_op_plain(x):
 	x.sort(key=lambda i: i.fitness)
 	return crossoverer.rex(x[:n + 1])
 
-def gaq_always_random_op(x):
+def gaq_op_always_random(x):
 	x.sort(key = lambda i: i.fitness)
 	parents = x[:n - 1]
 	for i in range(2):
@@ -23,13 +23,13 @@ def gaq_always_random_op(x):
 		parents.append(x[rand])
 	return crossoverer.rex(parents)
 
-def gaq_rarely_random_op(x):
+def gaq_op_rarely_random(x):
 	if np.random.random() > 0.1:
-		return gaq_always_random_op(x)
+		return gaq_op_always_random(x)
 	else:
-		return gaq_plain_op(x)
+		return gaq_op_plain(x)
 
-def gaq_fixed_range_op(x):
+def gaq_op_fixed_range(x):
 	x.sort(key = lambda i: i.fitness)
 	parents = x[:n - 1]
 	clone = x[:]
@@ -39,7 +39,7 @@ def gaq_fixed_range_op(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
-def gaq_random_range_op(x):
+def gaq_op_random_range(x):
 	x.sort(key = lambda i: i.fitness)
 	parents = x[:n - 1]
 	clone = x[:]
@@ -53,12 +53,12 @@ def init():
 	init_rough_gmm()
 
 n = 10
-npop = 6 * n
+npop = 20
 npar = 4
 nchi = 20
 step_count = 400
 loop_count = 1000
-problem = rough_gmm_ave
+problem = rough_gmm_weighted_ave
 raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
@@ -92,7 +92,7 @@ for _ in range(loop_count):
 
 	for opt in gaqsystem_opt_list:
 		name, color = opt
-		exec("op = gaq_{}_op".format(name))
+		exec("op = gaq_op_{}".format(name))
 		init()
 		np.random.seed(randseed)
 		gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
