@@ -11,11 +11,15 @@ from problem.frontier.rastrigin import rastrigin
 from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
 from plot import plot
 
-def gaq_op_plain(x):
+def gaq_op_plain_origopt(x):
 	x.sort(key=lambda i: i.fitness)
 	return crossoverer.rex(x[:n + 1])
 
-def gaq_op_always_random(x):
+def gaq_op_plain_jggopt(x):
+	x.sort(key=lambda i: i.fitness)
+	return crossoverer.rex(x[:npar], nchi)
+
+def gaq_op_always_random_origopt(x):
 	x.sort(key = lambda i: i.fitness)
 	parents = x[:n - 1]
 	for i in range(2):
@@ -23,11 +27,19 @@ def gaq_op_always_random(x):
 		parents.append(x[rand])
 	return crossoverer.rex(parents)
 
+def gaq_op_always_random_jggopt(x):
+	x.sort(key = lambda i: i.fitness)
+	parents = x[:npar - 2]
+	for i in range(2):
+		rand = np.random.randint(len(x))
+		parents.append(x[rand])
+	return crossoverer.rex(parents, nchi)
+
 def gaq_op_rarely_random(x):
 	if np.random.random() > 0.1:
-		return gaq_op_always_random(x)
+		return gaq_op_always_random_origopt(x)
 	else:
-		return gaq_op_plain(x)
+		return gaq_op_plain_origopt(x)
 
 def gaq_op_fixed_range(x):
 	x.sort(key = lambda i: i.fitness)
@@ -52,19 +64,21 @@ def gaq_op_random_range(x):
 def init():
 	init_rough_gmm()
 
-n = 10
-npop = 20
-npar = 4
-nchi = 20
-step_count = 400
-loop_count = 1000
-problem = rough_gmm_weighted_ave
-raw_problem = gmm
+n = 20
+npop = 6 * n
+npar = n + 1
+nchi = 6 * n
+step_count = 27200
+loop_count = 100
+problem = sphere
+raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
-	["plain", "m"],
-	["always_random", "b"],
+	["plain_origopt", "m"],
+	["plain_jggopt", "c"],
+	["always_random_origopt", "b"],
+	["always_random_jggopt", "navy"],
 	["rarely_random", "navy"],
 	["fixed_range", "c"],
 	["random_range", "g"],
