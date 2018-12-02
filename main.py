@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
-from individual import Individual
+from individual import Individual, State
 import crossoverer
 from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
@@ -10,6 +10,9 @@ from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
 from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
 from plot import plot
+import warnings
+
+warnings.simplefilter("error", RuntimeWarning)
 
 def gaq_op_plain_origopt(x):
 	x.sort(key=lambda i: i.fitness)
@@ -61,18 +64,50 @@ def gaq_op_random_range(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
-def gaq_gradient(x):
+def gaq_op_gradient(x):
 	initial = [i for i in x if i.birth_year == 0]
-	x.sort(key = lambda i: i.birth_year)
-	most_recent_birth_year = x[0].birth_year
-	most_recent = [i for i in x if i.birth_year == recent_birth_year]
-	left = [i for i in x if i.birth_year != recent_birth_year]
-	second_recent_birth_year = x[0].birth_year
-	second_recent = [i for i in x if i.birth_year == second_recent_birth_year]
+	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
+	trimmed.sort(key = lambda i: -i.birth_year)
+	most_recent_birth_year = trimmed[0].birth_year
+	most_recent = [i for i in trimmed if i.birth_year == most_recent_birth_year]
+	left = [i for i in trimmed if i not in most_recent]
+
+	if len(left) == 0:
+		return gaq_op_plain_origopt(trimmed)
+
+	second_recent_birth_year = left[0].birth_year
+	second_recent = [i for i in left if i.birth_year == second_recent_birth_year]
 
 	initial_fitness = np.average([i.fitness for i in initial])
-	first_fitness = np.average([i.fitness for i in initial])
-	second_fitness = np.average([i.fitness for i in initial])
+	first_fitness = np.average([i.fitness for i in most_recent])
+	second_fitness = np.average([i.fitness for i in second_recent])
+
+	diff_init_recent = initial_fitness - first_fitness
+	diff_mostrecent_secondrecent = second_fitness - first_fitness
+
+	if diff_mostrecent_secondrecent == 0 or diff_mostrecent_secondrecent / diff_init_recent < 0.0001:
+		# print("stucked", most_recent_birth_year, diff_init_recent, diff_mostrecent_secondrecent)
+		# print("stucked", most_recent_birth_year)
+		for i in x:
+			if i.state == State.SEARCHING:
+				i.state = State.NO_LONGER_SEARCH
+		trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
+		trimmed.sort(key=lambda i: i.fitness)
+		ret = crossoverer.rex(trimmed[:n + 1])
+		for i in ret:
+			i.state = State.SEARCHING
+		# for i in trimmed[:(n + 1) // 4]:
+		for i in trimmed[:2]:
+			i.state = State.NO_LONGER_SEARCH
+	# else:
+		# print("-------", most_recent_birth_year, diff_init_recent, diff_mostrecent_secondrecent)
+
+	trimmed.sort(key=lambda i: i.fitness)
+	ret = crossoverer.rex(trimmed[:n + 1])
+	for i in ret:
+		i.state = State.SEARCHING
+
+	return ret
 
 def init():
 	init_rough_gmm()
@@ -84,18 +119,19 @@ npar = n + 1
 nchi = 6 * n
 step_count = 27200
 loop_count = 100
-problem = sphere
-raw_problem = sphere
+problem = ackley
+raw_problem = ackley
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
+	["gradient", "g"],
 	["plain_origopt", "m"],
-	["plain_jggopt", "c"],
-	["always_random_origopt", "b"],
-	["always_random_jggopt", "navy"],
-	["rarely_random", "navy"],
-	["fixed_range", "c"],
-	["random_range", "g"],
+	# ["plain_jggopt", "c"],
+	# ["always_random_origopt", "b"],
+	# ["always_random_jggopt", "navy"],
+	# ["rarely_random", "navy"],
+	# ["fixed_range", "c"],
+	# ["random_range", "g"],
 ]
 best_list = {"jgg" : 0}
 for opt in gaqsystem_opt_list:
