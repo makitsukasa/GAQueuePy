@@ -1,4 +1,10 @@
 import numpy as np
+from enum import Enum, auto
+
+class State(Enum):
+	NONE = auto()
+	SEARCHING = auto()
+	NO_LONGER_SEARCH = auto()
 
 class Individual:
 	def __init__(self, n):
@@ -15,6 +21,7 @@ class Individual:
 		self.fitness = None
 		self.raw_fitness = None
 		self.birth_year = 0
+		self.state = State.NONE
 
 	def __str__(self):
 		return "{r}/{f}({b}) {g}".format(
@@ -23,6 +30,3 @@ class Individual:
 			b = 'None' if self.birth_year  is None else self.birth_year,
 			g = ','.join(['{:.4}'.format(g) for g in self.gene])
 		)
-
-if __name__ == '__main__':
-	import main
