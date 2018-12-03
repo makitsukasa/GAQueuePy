@@ -90,7 +90,7 @@ def is_stucked(x):
 	else:
 		return False
 
-def gaq_op_gradient(x):
+def gaq_op_plain_origopt_gradient(x):
 	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
 	if is_stucked(trimmed):
 		for i in x:
@@ -107,17 +107,15 @@ def gaq_op_gradient(x):
 		i.state = State.SEARCHING
 	return ret
 
-def gaq_op_gradient_2(x):
+def gaq_op_plain_jggopt_gradient_elitesurvive(x):
 	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
 	if is_stucked(trimmed):
 		searching = [i for i in x if i.state == State.SEARCHING]
 		searching.sort(key = lambda i: i.fitness)
-		elites = searching[:npar]
-		not_elites = searching[npar:]
-		for i in elites:
-			i.state = State.NONE
-		for i in not_elites:
+		for i in searching[npar:]:
 			i.state = State.NO_LONGER_SEARCH
+		for i in searching[:npar]:
+			i.state = State.NONE
 		trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
 		np.random.shuffle(trimmed)
 		ret = crossoverer.rex(trimmed[:npar], nchi)
@@ -134,12 +132,12 @@ def init():
 	init_rough_gmm()
 	max_gradient = 0.0
 
-n = 10
+n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 27200
-loop_count = 100
+step_count = 10000
+loop_count = 1
 problem = sphere
 raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
@@ -147,8 +145,8 @@ title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 gaqsystem_opt_list = [
 	["plain_origopt", "m"],
 	["plain_jggopt", "c"],
-	["gradient", "g"],
-	["gradient_2", "lime"],
+	["plain_origopt_gradient", "g"],
+	["plain_jggopt_gradient_elitesurvive", "lime"],
 	# ["always_random_origopt", "b"],
 	# ["always_random_jggopt", "navy"],
 	# ["rarely_random", "navy"],
