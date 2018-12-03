@@ -85,6 +85,7 @@ def is_stucked(x):
 	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
 
 	if diff_init_mostrecent == 0 or diff_mostrecent_secondrecent / diff_init_mostrecent < 0.0001:
+		# print("stucked", most_recent_birth_year)
 		return True
 	else:
 		return False
@@ -97,9 +98,6 @@ def gaq_op_gradient(x):
 				i.state = State.NO_LONGER_SEARCH
 		trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
 		trimmed.sort(key=lambda i: i.fitness)
-		ret = crossoverer.rex(trimmed[:n + 1])
-		for i in ret:
-			i.state = State.SEARCHING
 		for i in trimmed[:2]:
 			i.state = State.NO_LONGER_SEARCH
 
@@ -107,7 +105,29 @@ def gaq_op_gradient(x):
 	ret = crossoverer.rex(trimmed[:n + 1])
 	for i in ret:
 		i.state = State.SEARCHING
+	return ret
 
+def gaq_op_gradient_2(x):
+	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
+	if is_stucked(trimmed):
+		searching = [i for i in x if i.state == State.SEARCHING]
+		searching.sort(key = lambda i: i.fitness)
+		elites = searching[:npar]
+		not_elites = searching[npar:]
+		for i in elites:
+			i.state = State.NONE
+		for i in not_elites:
+			i.state = State.NO_LONGER_SEARCH
+		trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
+		np.random.shuffle(trimmed)
+		ret = crossoverer.rex(trimmed[:npar], nchi)
+
+	else:
+		trimmed.sort(key=lambda i: i.fitness)
+		ret = crossoverer.rex(trimmed[:npar], nchi)
+
+	for i in ret:
+		i.state = State.SEARCHING
 	return ret
 
 def init():
@@ -118,16 +138,17 @@ n = 10
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 10000
-loop_count = 1
+step_count = 27200
+loop_count = 100
 problem = sphere
 raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
-	["gradient", "g"],
 	["plain_origopt", "m"],
-	# ["plain_jggopt", "c"],
+	["plain_jggopt", "c"],
+	["gradient", "g"],
+	["gradient_2", "lime"],
 	# ["always_random_origopt", "b"],
 	# ["always_random_jggopt", "navy"],
 	# ["rarely_random", "navy"],
