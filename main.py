@@ -64,30 +64,34 @@ def gaq_op_random_range(x):
 	parents.extend(clone[:2])
 	return crossoverer.rex(parents)
 
-def gaq_op_gradient(x):
+def is_stucked(x):
 	initial = [i for i in x if i.birth_year == 0]
-	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
-	trimmed.sort(key = lambda i: -i.birth_year)
-	most_recent_birth_year = trimmed[0].birth_year
-	most_recent = [i for i in trimmed if i.birth_year == most_recent_birth_year]
-	left = [i for i in trimmed if i not in most_recent]
+	x.sort(key = lambda i: -i.birth_year)
+	most_recent_birth_year = x[0].birth_year
+	most_recent = [i for i in x if i.birth_year == most_recent_birth_year]
+	left = [i for i in x if i not in most_recent]
 
-	if len(left) == 0:
-		return gaq_op_plain_origopt(trimmed)
+	if len(initial) == 0 or len(left) == 0:
+		return False
 
 	second_recent_birth_year = left[0].birth_year
 	second_recent = [i for i in left if i.birth_year == second_recent_birth_year]
 
 	initial_fitness = np.average([i.fitness for i in initial])
-	first_fitness = np.average([i.fitness for i in most_recent])
-	second_fitness = np.average([i.fitness for i in second_recent])
+	most_recent_fitness = np.average([i.fitness for i in most_recent])
+	second_recent_fitness = np.average([i.fitness for i in second_recent])
 
-	diff_init_recent = initial_fitness - first_fitness
-	diff_mostrecent_secondrecent = second_fitness - first_fitness
+	diff_init_mostrecent = initial_fitness - most_recent_fitness
+	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
 
-	if diff_init_recent == 0 or diff_mostrecent_secondrecent / diff_init_recent < 0.0001:
-		# print("stucked", most_recent_birth_year, diff_init_recent, diff_mostrecent_secondrecent)
-		# print("stucked", most_recent_birth_year)
+	if diff_init_mostrecent == 0 or diff_mostrecent_secondrecent / diff_init_mostrecent < 0.0001:
+		return True
+	else:
+		return False
+
+def gaq_op_gradient(x):
+	trimmed = [i for i in x if i.state != State.NO_LONGER_SEARCH]
+	if is_stucked(trimmed):
 		for i in x:
 			if i.state == State.SEARCHING:
 				i.state = State.NO_LONGER_SEARCH
@@ -96,11 +100,8 @@ def gaq_op_gradient(x):
 		ret = crossoverer.rex(trimmed[:n + 1])
 		for i in ret:
 			i.state = State.SEARCHING
-		# for i in trimmed[:(n + 1) // 4]:
 		for i in trimmed[:2]:
 			i.state = State.NO_LONGER_SEARCH
-	# else:
-		# print("-------", most_recent_birth_year, diff_init_recent, diff_mostrecent_secondrecent)
 
 	trimmed.sort(key=lambda i: i.fitness)
 	ret = crossoverer.rex(trimmed[:n + 1])
@@ -119,8 +120,8 @@ npar = n + 1
 nchi = 6 * n
 step_count = 10000
 loop_count = 1
-problem = rough_gmm_ave
-raw_problem = gmm
+problem = sphere
+raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
