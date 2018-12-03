@@ -113,14 +113,14 @@ def init():
 	init_rough_gmm()
 	max_gradient = 0.0
 
-n = 20
+n = 10
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 27200
+step_count = 10000
 loop_count = 1
-problem = ackley
-raw_problem = ackley
+problem = rough_gmm_ave
+raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
