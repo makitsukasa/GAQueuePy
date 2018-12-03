@@ -85,7 +85,7 @@ def gaq_op_gradient(x):
 	diff_init_recent = initial_fitness - first_fitness
 	diff_mostrecent_secondrecent = second_fitness - first_fitness
 
-	if diff_mostrecent_secondrecent / diff_init_recent < 0.0001:
+	if diff_init_recent == 0 or diff_mostrecent_secondrecent / diff_init_recent < 0.0001:
 		# print("stucked", most_recent_birth_year, diff_init_recent, diff_mostrecent_secondrecent)
 		# print("stucked", most_recent_birth_year)
 		for i in x:
