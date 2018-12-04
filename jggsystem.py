@@ -76,4 +76,4 @@ if __name__ == '__main__':
 	system.step(27200)
 	system.calc_raw_fitness(sphere)
 	print(system.get_best_individual())
-	# 10e-7 or lower
+	# around 10e-7

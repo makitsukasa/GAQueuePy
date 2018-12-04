@@ -84,8 +84,8 @@ def is_stucked(x):
 	diff_init_mostrecent = initial_fitness - most_recent_fitness
 	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
 
-	if diff_init_mostrecent == 0 or diff_mostrecent_secondrecent / diff_init_mostrecent < 0.0001:
-		# print("stucked", most_recent_birth_year)
+	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.0001:
+		# print("stucked", most_recent_birth_year, diff_mostrecent_secondrecent, diff_init_mostrecent)
 		return True
 	else:
 		return False
@@ -145,7 +145,7 @@ title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 gaqsystem_opt_list = [
 	["plain_origopt", "m"],
 	["plain_jggopt", "c"],
-	["plain_origopt_gradient", "g"],
+	["plain_origopt_gradient", "b"],
 	["plain_jggopt_gradient_elitesurvive", "lime"],
 	# ["always_random_origopt", "b"],
 	# ["always_random_jggopt", "navy"],
