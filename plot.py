@@ -13,3 +13,4 @@ def plot(step_count, history, color = 'b', label = ''):
 	f_raw = [i.raw_fitness for i in history]
 	f = np.convolve(f_raw, np.ones(v) / v, mode = 'vaild')
 	plt.plot(x[:len(f)], f, linewidth = 0.5, color = color, label = label)
+	# plt.plot(x[:len(f_raw)], f_raw, linewidth = 0.5, color = color, label = label)

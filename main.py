@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
+from sggsystem import SGGSystem
 from individual import Individual, State
 import crossoverer
 from problem.frontier.sphere import sphere
@@ -143,17 +144,17 @@ raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
-	["plain_origopt", "m"],
-	["plain_jggopt", "c"],
-	["plain_origopt_gradient", "b"],
-	["plain_jggopt_gradient_elitesurvive", "lime"],
+	# ["plain_origopt", "m"],
+	# ["plain_jggopt", "c"],
+	# ["plain_origopt_gradient", "b"],
+	# ["plain_jggopt_gradient_elitesurvive", "lime"],
 	# ["always_random_origopt", "b"],
 	# ["always_random_jggopt", "navy"],
 	# ["rarely_random", "navy"],
 	# ["fixed_range", "c"],
 	# ["random_range", "g"],
 ]
-best_list = {"jgg" : 0}
+best_list = {"jgg" : 0, "sgg" : 0}
 for opt in gaqsystem_opt_list:
 	name, color = opt
 	best_list[name] = 0
@@ -173,6 +174,17 @@ for _ in range(loop_count):
 	best_list["jgg"] += best.raw_fitness / loop_count
 	if loop_count == 1:
 		plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
+
+	init()
+	np.random.seed(randseed)
+	sggsys = SGGSystem(problem, n, npop, npar)
+	sggsys.step(step_count)
+	sggsys.calc_raw_fitness(raw_problem)
+	best = sggsys.get_best_individual()
+	# print(best);
+	best_list["sgg"] += best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, sggsys.history, color = 'black', label = 'SGG : {:.10f}'.format(best.raw_fitness))
 
 	for opt in gaqsystem_opt_list:
 		name, color = opt
