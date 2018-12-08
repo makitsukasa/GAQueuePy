@@ -85,7 +85,7 @@ def is_stucked(x):
 	diff_init_mostrecent = initial_fitness - most_recent_fitness
 	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
 
-	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.0001:
+	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.000001:
 		# print("stucked", most_recent_birth_year, diff_mostrecent_secondrecent, diff_init_mostrecent)
 		return True
 	else:
@@ -129,6 +129,10 @@ def gaq_op_plain_jggopt_gradient_elitesurvive(x):
 		i.state = State.SEARCHING
 	return ret
 
+def gaq_op_pseudo_jgg(x):
+	np.random.shuffle(x)
+	children = crossoverer.rex(x[:npar], nchi)
+
 def init():
 	init_rough_gmm()
 	max_gradient = 0.0
@@ -154,7 +158,7 @@ gaqsystem_opt_list = [
 	# ["fixed_range", "c"],
 	# ["random_range", "g"],
 ]
-best_list = {"jgg" : 0, "sgg" : 0}
+best_list = {"jgg" : 0, "jgg_stuck" : 0, "jgg_5step" : 0}
 for opt in gaqsystem_opt_list:
 	name, color = opt
 	best_list[name] = 0
@@ -182,9 +186,20 @@ for _ in range(loop_count):
 	sggsys.calc_raw_fitness(raw_problem)
 	best = sggsys.get_best_individual()
 	# print(best);
-	best_list["sgg"] += best.raw_fitness / loop_count
+	best_list["jgg_stuck"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		plot(step_count, sggsys.history, color = 'black', label = 'SGG : {:.10f}'.format(best.raw_fitness))
+		plot(step_count, sggsys.history, color = 'b', label = 'JGG_stuck : {:.10f}'.format(best.raw_fitness))
+
+	init()
+	np.random.seed(randseed)
+	sggsys = SGGSystem(problem, n, npop, npar, 5)
+	sggsys.step(step_count)
+	sggsys.calc_raw_fitness(raw_problem)
+	best = sggsys.get_best_individual()
+	# print(best);
+	best_list["jgg_5step"] += best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, sggsys.history, color = 'c', label = 'JGG_5step : {:.10f}'.format(best.raw_fitness))
 
 	for opt in gaqsystem_opt_list:
 		name, color = opt
