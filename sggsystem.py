@@ -22,8 +22,8 @@ def is_stucked(x):
 	diff_init_mostrecent = initial_fitness - most_recent_fitness
 	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
 
-	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.0001:
-		print("stucked", most_recent_birth_year, diff_mostrecent_secondrecent, diff_init_mostrecent)
+	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.000001:
+		# print("stucked", most_recent_birth_year, diff_mostrecent_secondrecent, diff_init_mostrecent)
 		return True
 	else:
 		return False
@@ -74,15 +74,16 @@ class SGGSystem(object):
 			if len(self.children_before_eval) == 0:
 				self.inner_age += 1
 				self.inner_population.extend(self.children_after_eval)
-				if self.can_go_next_generation():
-					self.inner_population.sort(key=lambda i: i.fitness)
-					self.outer_population.extend(self.inner_population[:self.npar])
-					self.inner_population = []
-					self.children_before_eval = self.select_parents()
-					self.inner_age = 0
-				else:
+				self.children_after_eval.clear()
+				if not self.can_go_next_generation():
 					self.inner_population.sort(key=lambda i: i.fitness)
 					self.children_before_eval = crossoverer.rex(self.inner_population[:self.npar])
+				else:
+					self.inner_population.sort(key=lambda i: i.fitness)
+					self.outer_population.extend(self.inner_population[:self.npar])
+					self.inner_population.clear()
+					self.children_before_eval = self.select_parents()
+					self.inner_age = 0
 				for i in self.children_before_eval:
 					i.birth_year = self.age
 
