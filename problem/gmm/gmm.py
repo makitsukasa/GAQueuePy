@@ -31,29 +31,28 @@ def init_rough_gmm():
 	mean = 0.0
 	disc_sum = 0.0
 
-def rough_gmm_ave(x):
+def rough_gmm_ave(x, magnification = 1):
 	global count
 	global mean
 	val = gmm(x)
 	ret = -1.0
-	if abs(mean - val) < 0.01:
+	if abs(mean * magnification - val) < 0.01:
 		ret = 0.0
-	elif mean < val:
+	elif mean * magnification < val:
 		ret = 1.0
 	mean = (mean * count + val) / (count + 1)
 	count += 1
 	return ret
 
-def rough_gmm_weighted_ave(x):
+def rough_gmm_weighted_ave(x, rate = 0.5):
 	global disc_sum
 	global count
-	r = 0.2
 	val = gmm(x)
 	ret = -1.0
 	if abs(val - disc_sum) < 0.01:
 		ret = 0.0
 	elif val > disc_sum:
 		ret = 1.0
-	disc_sum = ((1 - r) * val + r * disc_sum * (1 - r ** count)) / (1 - r ** (count + 1))
+	disc_sum = ((1 - rate) * val + rate * disc_sum * (1 - rate ** count)) / (1 - rate ** (count + 1))
 	count += 1
 	return ret
