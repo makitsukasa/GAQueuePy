@@ -137,28 +137,41 @@ def init():
 	init_rough_gmm()
 	max_gradient = 0.0
 
-n = 20
+def rough_gmm_ave_50(x):
+	return rough_gmm_ave(x, 0.5)
+def rough_gmm_ave_100(x):
+	return rough_gmm_ave(x, 1.0)
+def rough_gmm_ave_200(x):
+	return rough_gmm_ave(x, 2.0)
+def rough_gmm_weighted_ave_25(x):
+	return rough_gmm_weighted_ave(x, 0.25)
+def rough_gmm_weighted_ave_50(x):
+	return rough_gmm_weighted_ave(x, 0.5)
+def rough_gmm_weighted_ave_75(x):
+	return rough_gmm_weighted_ave(x, 0.75)
+
+n = 10
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-step_count = 10000
-loop_count = 1
-problem = sphere
-raw_problem = sphere
+step_count = 400
+loop_count = 100
+problem = rough_gmm_weighted_ave_75
+raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 gaqsystem_opt_list = [
-	# ["plain_origopt", "m"],
+	["plain_origopt", "m"],
 	# ["plain_jggopt", "c"],
-	# ["plain_origopt_gradient", "b"],
+	# ["plain_origopt_gradient", "lime"],
 	# ["plain_jggopt_gradient_elitesurvive", "lime"],
-	# ["always_random_origopt", "b"],
+	["always_random_origopt", "b"],
 	# ["always_random_jggopt", "navy"],
 	# ["rarely_random", "navy"],
 	# ["fixed_range", "c"],
 	# ["random_range", "g"],
 ]
-best_list = {"jgg" : 0, "jgg_stuck" : 0, "jgg_5step" : 0}
+best_list = {"jgg" : 0, "jgg_5step" : 0}
 for opt in gaqsystem_opt_list:
 	name, color = opt
 	best_list[name] = 0
@@ -179,16 +192,16 @@ for _ in range(loop_count):
 	if loop_count == 1:
 		plot(step_count, jggsys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
-	init()
-	np.random.seed(randseed)
-	sggsys = SGGSystem(problem, n, npop, npar)
-	sggsys.step(step_count)
-	sggsys.calc_raw_fitness(raw_problem)
-	best = sggsys.get_best_individual()
-	# print(best);
-	best_list["jgg_stuck"] += best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, sggsys.history, color = 'b', label = 'JGG_stuck : {:.10f}'.format(best.raw_fitness))
+	# init()
+	# np.random.seed(randseed)
+	# sggsys = SGGSystem(problem, n, npop, npar)
+	# sggsys.step(step_count)
+	# sggsys.calc_raw_fitness(raw_problem)
+	# best = sggsys.get_best_individual()
+	# # print(best);
+	# best_list["jgg_stuck"] += best.raw_fitness / loop_count
+	# if loop_count == 1:
+	# 	plot(step_count, sggsys.history, color = 'b', label = 'JGG_stuck : {:.10f}'.format(best.raw_fitness))
 
 	init()
 	np.random.seed(randseed)
