@@ -154,7 +154,7 @@ n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-swap_count = 4000
+swap_count = 25000
 step_count = 27200
 loop_count = 1
 problem = sphere
@@ -171,16 +171,18 @@ for _ in range(loop_count):
 	jgg_sys = JGGSystem(problem, n, npop, npar, nchi)
 	jgg_sys.step(step_count)
 	jgg_sys.calc_raw_fitness(raw_problem)
+	best = jgg_sys.get_best_individual()
+	best_list["jgg"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		best = jgg_sys.get_best_individual()
 		plot(step_count, jgg_sys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
 	gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], gaq_op_plain_origopt)
 	gaq_sys.step(step_count)
 	gaq_sys.calc_raw_fitness(raw_problem)
+	best = gaq_sys.get_best_individual()
+	best_list["gaq"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		best = gaq_sys.get_best_individual()
 		plot(step_count, gaq_sys.history, color = 'b', label = 'GAQ : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
@@ -201,15 +203,17 @@ for _ in range(loop_count):
 
 	gaq_jgg_sys.step(step_count - swap_count)
 	gaq_jgg_sys.calc_raw_fitness(raw_problem)
+	best = gaq_jgg_sys.get_best_individual()
+	best_list["gaq->jgg"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		best = gaq_jgg_sys.get_best_individual()
-		plot(step_count, gaq_jgg_sys.history, color = 'g', label = 'JGG->GAQ : {:.10f}'.format(best.raw_fitness))
+		plot(step_count, gaq_jgg_sys.history, color = 'g', label = 'GAQ->JGG : {:.10f}'.format(best.raw_fitness))
 
 	jgg_gaq_sys.step(step_count - swap_count)
 	jgg_gaq_sys.calc_raw_fitness(raw_problem)
+	best = jgg_gaq_sys.get_best_individual()
+	best_list["jgg->gaq"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		best = jgg_gaq_sys.get_best_individual()
-		plot(step_count, jgg_gaq_sys.history, color = 'm', label = 'GAQ->JGG : {:.10f}'.format(best.raw_fitness))
+		plot(step_count, jgg_gaq_sys.history, color = 'm', label = 'JGG->GAQ : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
