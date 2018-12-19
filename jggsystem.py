@@ -12,7 +12,6 @@ class JGGSystem(object):
 	def __init__(self, problem, n, npop, npar, nchi):
 		self.n = n
 		self.problem = problem
-		self.children = []
 		self.npop = npop
 		self.npar = npar
 		self.nchi = nchi
@@ -40,7 +39,6 @@ class JGGSystem(object):
 	def evaluate(self):
 		indiv = self.children_before_eval.pop(-1)
 		indiv.fitness = self.problem(indiv.gene)
-		self.children.append(indiv)
 		self.children_after_eval.append(indiv)
 		self.history.append(indiv)
 		return indiv
