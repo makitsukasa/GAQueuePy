@@ -60,6 +60,9 @@ class SwapSystem(object):
 		else:
 			return self.jgg_sys
 
+	def switch_to_gaq(self, history):
+		return is_stucked(history)
+
 	def switch_active_system(self):
 		if self.is_gaq_active:
 			if is_stucked(self.gaq_sys.history):
@@ -69,7 +72,7 @@ class SwapSystem(object):
 				self.jgg_sys.age = self.gaq_sys.age
 				self.is_gaq_active = False
 		else:
-			if False:
+			if self.switch_to_gaq(self.jgg_sys.history):
 				self.gaq_sys.history = self.jgg_sys.history
 				self.gaq_sys.age = self.jgg_sys.age
 				self.is_gaq_active = True
@@ -93,6 +96,7 @@ if __name__ == '__main__':
 
 	n = 20
 	system = SwapSystem(sphere, n, 6 * n, n + 1, 6 * n)
+	system.switch_to_gaq = lambda x: False
 	system.step(27200)
 	system.calc_raw_fitness(sphere)
 	print(system.get_best_individual())
