@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
 from sggsystem import SGGSystem
+from swapsystem import SwapSystem
 from individual import Individual, State
 import crossoverer
 from problem.frontier.sphere import sphere
@@ -154,14 +155,13 @@ n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-swap_count = 25000
 step_count = 27200
 loop_count = 1
 problem = sphere
 raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
-best_list = {"jgg" : 0, "gaq" : 0, "jgg->gaq" : 0, "gaq->jgg" : 0}
+best_list = {"jgg" : 0, "gaq" : 0, "swap" : 0}
 print(title)
 
 for _ in range(loop_count):
@@ -186,34 +186,13 @@ for _ in range(loop_count):
 		plot(step_count, gaq_sys.history, color = 'b', label = 'GAQ : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
-	gaq_jgg_sys = JGGSystem(problem, n, npop, npar, nchi)
-	gaq_jgg_sys.step(swap_count)
-
-	op = gaq_op_plain_origopt
-	np.random.seed(randseed)
-	jgg_gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], op)
-	jgg_gaq_sys.step(swap_count)
-
-	his_JGG = gaq_jgg_sys.history[:]
-	his_GAQ = jgg_gaq_sys.history[:]
-
-	gaq_jgg_sys.history = his_GAQ
-	gaq_jgg_sys.population = his_GAQ[:npop]
-	jgg_gaq_sys.history = his_JGG
-
-	gaq_jgg_sys.step(step_count - swap_count)
-	gaq_jgg_sys.calc_raw_fitness(raw_problem)
-	best = gaq_jgg_sys.get_best_individual()
-	best_list["gaq->jgg"] += best.raw_fitness / loop_count
+	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
+	swap_sys.step(step_count)
+	swap_sys.calc_raw_fitness(raw_problem)
+	best = swap_sys.get_best_individual()
+	best_list["swap"] += best.raw_fitness / loop_count
 	if loop_count == 1:
-		plot(step_count, gaq_jgg_sys.history, color = 'g', label = 'GAQ->JGG : {:.10f}'.format(best.raw_fitness))
-
-	jgg_gaq_sys.step(step_count - swap_count)
-	jgg_gaq_sys.calc_raw_fitness(raw_problem)
-	best = jgg_gaq_sys.get_best_individual()
-	best_list["jgg->gaq"] += best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, jgg_gaq_sys.history, color = 'm', label = 'JGG->GAQ : {:.10f}'.format(best.raw_fitness))
+		plot(step_count, swap_sys.get_active_system().history, color = 'g', label = 'swap : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)

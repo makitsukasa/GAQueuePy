@@ -14,8 +14,25 @@ def is_stucked(x):
 	if len(initial) == 0 or len(left) == 0:
 		return False
 
+	second_recent_birth_year = left[0].birth_year
+	second_recent = [i for i in left if i.birth_year == second_recent_birth_year]
+
+	initial_fitness = np.average([i.fitness for i in initial])
+	most_recent_fitness = np.average([i.fitness for i in most_recent])
+	second_recent_fitness = np.average([i.fitness for i in second_recent])
+
+	diff_init_mostrecent = initial_fitness - most_recent_fitness
+	diff_mostrecent_secondrecent = second_recent_fitness - most_recent_fitness
+
+	if diff_init_mostrecent == 0 or abs(diff_mostrecent_secondrecent / diff_init_mostrecent) < 0.000001:
+		# print("stucked", most_recent_birth_year, diff_mostrecent_secondrecent, diff_init_mostrecent)
+		return True
+	else:
+		return False
+
 def gaq_op_plain_origopt(x):
 	x.sort(key=lambda i: i.fitness)
+	n = x[0].n
 	return crossoverer.rex(x[:n + 1])
 
 class SwapSystem(object):
@@ -45,21 +62,22 @@ class SwapSystem(object):
 
 	def switch_active_system(self):
 		if self.is_gaq_active:
-			self.jgg_sys.history = self.gaq_sys.history
-			self.jgg_sys.population = self.gaq_sys.history[:npop]
-			self.jgg_sys.age = self.gaq_sys.age
+			if is_stucked(self.gaq_sys.history):
+				self.jgg_sys.history = self.gaq_sys.history
+				np.random.shuffle(self.gaq_sys.history)
+				self.jgg_sys.population = self.gaq_sys.history[:self.npop]
+				self.jgg_sys.age = self.gaq_sys.age
+				self.is_gaq_active = False
 		else:
-			self.gaq_sys.history = self.jgg_sys.history
-			self.gaq_sys.age = self.jgg_sys.age
-
-		self.is_gaq_active = not self.is_gaq_active
+			if False:
+				self.gaq_sys.history = self.jgg_sys.history
+				self.gaq_sys.age = self.jgg_sys.age
+				self.is_gaq_active = True
 
 	def step(self, count = 1):
 		for _ in range(count):
 			self.get_active_system().step()
-
-			if is_stucked(self.get_active_system().history):
-				self.switch_active_system()
+			self.switch_active_system()
 
 	def calc_raw_fitness(self, problem):
 		self.get_active_system().calc_raw_fitness(problem)
