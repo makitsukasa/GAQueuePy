@@ -156,12 +156,12 @@ npop = 6 * n
 npar = n + 1
 nchi = 6 * n
 step_count = 27200
-loop_count = 30
+loop_count = 1
 problem = sphere
 raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
-best_list = {"jgg" : 0, "gaq" : 0, "swap_once" : 0, "swap_twice" : 0, "swap_each" : 0}
+best_list = {"jgg" : 0, "swap_twice" : 0}
 print(title)
 
 for _ in range(loop_count):
@@ -177,25 +177,6 @@ for _ in range(loop_count):
 		plot(step_count, jgg_sys.history, color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
-	gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], gaq_op_plain_origopt)
-	gaq_sys.step(step_count)
-	gaq_sys.calc_raw_fitness(raw_problem)
-	best = gaq_sys.get_best_individual()
-	best_list["gaq"] += best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, gaq_sys.history, color = 'b', label = 'GAQ : {:.10f}'.format(best.raw_fitness))
-
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
-	swap_sys.switch_to_gaq = lambda x: False
-	swap_sys.step(step_count)
-	swap_sys.calc_raw_fitness(raw_problem)
-	best = swap_sys.get_best_individual()
-	best_list["swap_once"] += best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history, color = 'g', label = 'swap_once : {:.10f}'.format(best.raw_fitness))
-
-	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
 	swap_sys.switch_to_gaq = lambda x: swap_sys.switch_to_gaq_step_count(step_count * 95 // 100)
 	swap_sys.step(step_count)
@@ -204,15 +185,6 @@ for _ in range(loop_count):
 	best_list["swap_twice"] += best.raw_fitness / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history, color = 'y', label = 'swap_twice : {:.10f}'.format(best.raw_fitness))
-
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
-	swap_sys.step(step_count)
-	swap_sys.calc_raw_fitness(raw_problem)
-	best = swap_sys.get_best_individual()
-	best_list["swap_each"] += best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history, color = 'orange', label = 'swap_each : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
