@@ -8,7 +8,7 @@ fitness_history = []
 
 def is_stucked(x):
 	global fitness_history
-	delay = 20
+	delay = 2
 
 	clone = x[:]
 	clone.sort(key = lambda i: -i.birth_year)
@@ -51,6 +51,7 @@ class SwapSystem(object):
 			[Individual(n) for i in range(npop)],
 			gaq_op_plain_origopt
 		)
+		self.type = ""
 
 	def get_active_system(self):
 		if self.is_gaq_active:
@@ -58,14 +59,15 @@ class SwapSystem(object):
 		else:
 			return self.jgg_sys
 
-	def switch_to_gaq(self, history):
-		return is_stucked(history)
+	def switch_to_gaq(self, gaq_sys):
+		return is_stucked(gaq_sys.history)
 
-	def switch_to_jgg(self, history):
-		return is_stucked(history)
+	def switch_to_jgg(self, jgg_sys):
+		return is_stucked(jgg_sys.history)
 
-	def switch_to_gaq_step_count(self, count):
-		return self.get_active_system().age > count
+	def keep_population_to_jgg(self, gaq_system):
+		np.random.shuffle(self.gaq_sys.history)
+		self.jgg_sys.population = self.gaq_sys.history[:self.npop]
 
 	def switch_active_system(self):
 		global fitness_history
@@ -73,8 +75,11 @@ class SwapSystem(object):
 			if self.switch_to_jgg(self.gaq_sys.history):
 				# print("JGG->GAQ", self.gaq_sys.age)
 				self.jgg_sys.history = self.gaq_sys.history
-				np.random.shuffle(self.gaq_sys.history)
-				self.jgg_sys.population = self.gaq_sys.history[:self.npop]
+				if self.type == "GAQisGARBAGE":
+					pass
+				else:
+					np.random.shuffle(self.gaq_sys.history)
+					self.jgg_sys.population = self.gaq_sys.history[:self.npop]
 				self.jgg_sys.age = self.gaq_sys.age
 				self.is_gaq_active = False
 				fitness_history.clear()

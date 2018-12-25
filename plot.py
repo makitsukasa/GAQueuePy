@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-font = {"family":"Noto Sans JP Regular"}
-mpl.rc('font', **font)
+# font = {"family":"Noto Sans JP Regular"}
+# mpl.rc('font', **font)
 
 def plot(step_count, history, color = 'b', label = ''):
 	x = range(step_count)
