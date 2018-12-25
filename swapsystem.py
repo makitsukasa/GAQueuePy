@@ -65,21 +65,17 @@ class SwapSystem(object):
 	def switch_to_jgg(self, jgg_sys):
 		return is_stucked(jgg_sys.history)
 
-	def keep_population_to_jgg(self, gaq_system):
-		np.random.shuffle(self.gaq_sys.history)
-		self.jgg_sys.population = self.gaq_sys.history[:self.npop]
+	def choose_population_to_jgg(self, gaq_sys):
+		np.random.shuffle(gaq_sys.history)
+		return gaq_sys.history[:self.npop]
 
 	def switch_active_system(self):
 		global fitness_history
 		if self.is_gaq_active:
-			if self.switch_to_jgg(self.gaq_sys.history):
+			if self.switch_to_jgg(self.gaq_sys):
 				# print("JGG->GAQ", self.gaq_sys.age)
-				self.jgg_sys.history = self.gaq_sys.history
-				if self.type == "GAQisGARBAGE":
-					pass
-				else:
-					np.random.shuffle(self.gaq_sys.history)
-					self.jgg_sys.population = self.gaq_sys.history[:self.npop]
+				self.jgg_sys.history = self.gaq_sys.history[:]
+				self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
 				self.jgg_sys.age = self.gaq_sys.age
 				self.is_gaq_active = False
 				fitness_history.clear()
