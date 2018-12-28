@@ -51,7 +51,6 @@ class SwapSystem(object):
 			[Individual(n) for i in range(npop)],
 			gaq_op_plain_origopt
 		)
-		self.type = ""
 
 	def get_active_system(self):
 		if self.is_gaq_active:
@@ -72,20 +71,22 @@ class SwapSystem(object):
 	def switch_active_system(self):
 		global fitness_history
 		if self.is_gaq_active:
-			if self.switch_to_jgg(self.gaq_sys):
-				# print("JGG->GAQ", self.gaq_sys.age)
-				self.jgg_sys.history = self.gaq_sys.history[:]
-				self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
-				self.jgg_sys.age = self.gaq_sys.age
-				self.is_gaq_active = False
-				fitness_history.clear()
+			if not self.switch_to_jgg(self.gaq_sys):
+				return
+			# print("JGG->GAQ", self.gaq_sys.age)
+			self.jgg_sys.history = self.gaq_sys.history[:]
+			self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
+			self.jgg_sys.age = self.gaq_sys.age
+			self.is_gaq_active = False
+			fitness_history.clear()
 		else:
-			if self.switch_to_gaq(self.jgg_sys.history):
-				# print("GAQ->JGG", self.jgg_sys.age)
-				self.gaq_sys.history = self.jgg_sys.history
-				self.gaq_sys.age = self.jgg_sys.age
-				self.is_gaq_active = True
-				fitness_history.clear()
+			if not self.switch_to_gaq(self.jgg_sys.history):
+				return
+			# print("GAQ->JGG", self.jgg_sys.age)
+			self.gaq_sys.history = self.jgg_sys.history
+			self.gaq_sys.age = self.jgg_sys.age
+			self.is_gaq_active = True
+			fitness_history.clear()
 
 	def step(self, count = 1):
 		for _ in range(count):
