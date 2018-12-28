@@ -5,6 +5,7 @@ class State(Enum):
 	NONE = auto()
 	SEARCHING = auto()
 	NO_LONGER_SEARCH = auto()
+	USED_IN_GAQ = auto()
 
 class Individual:
 	def __init__(self, n):
