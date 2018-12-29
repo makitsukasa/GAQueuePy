@@ -27,33 +27,25 @@ def choose_population_throw_gaq(sys):
 	sys.history.sort(key = lambda i : i.birth_year)
 	return sys.history[:npop]
 
-def choose_population_add_elite_1(sys):
+def choose_population_add_elites(sys, elites_count):
 	sys.history.sort(key = lambda i : i.birth_year)
 	ret = sys.history[:npop]
 	sys.history.sort(key = lambda i : i.fitness)
-	ret.extend(sys.history[:1])
-	return ret
-
-def choose_population_add_elite_npar(sys):
-	sys.history.sort(key = lambda i : i.birth_year)
-	ret = sys.history[:npop]
-	sys.history.sort(key = lambda i : i.fitness)
-	ret.extend(sys.history[:npar])
+	ret.extend(sys.history[:elites_count])
 	return ret
 
 def choose_population_replace_by_elites(sys, elites_count):
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
+	np.random.shuffle(sys.history)
 	ret = []
 	for i in initial:
-		if elites_count <= 0:
-			ret.append(i)
-		elif i.state == State.USED_IN_GAQ:
+		if elites_count > 0 and i.state == State.USED_IN_GAQ:
 			elites_count -= 1
-
+		else:
+			ret.append(i)
 	sys.history.sort(key = lambda i : i.fitness)
 	ret.extend(sys.history[:elites_count])
-
 	return ret
 
 def init():
@@ -121,7 +113,7 @@ for _ in range(loop_count):
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
 	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = choose_population_add_elite_1
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_add_elites(sys, 1)
 	swap_sys.step(step_count)
 	swap_sys.calc_raw_fitness(raw_problem)
 	best = swap_sys.get_best_individual()
@@ -136,7 +128,7 @@ for _ in range(loop_count):
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
 	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = choose_population_add_elite_npar
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_add_elites(sys, npar)
 	swap_sys.step(step_count)
 	swap_sys.calc_raw_fitness(raw_problem)
 	best = swap_sys.get_best_individual()
