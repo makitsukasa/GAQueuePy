@@ -1,6 +1,7 @@
 import numpy as np
 from individual import Individual
 import crossoverer
+from problem.frontier.ellipsoid import ellipsoid
 
 class JGGSystem(object):
 	"""
@@ -70,8 +71,8 @@ if __name__ == '__main__':
 		return np.sum(shifted ** 2)
 
 	n = 20
-	system = JGGSystem(sphere, n, 6 * n, n + 1, 6 * n)
-	system.step(27200)
-	system.calc_raw_fitness(sphere)
+	system = JGGSystem(ellipsoid, n, 6 * n, n + 1, 6 * n)
+	system.step(33800)
+	system.calc_raw_fitness(ellipsoid)
 	print(system.get_best_individual())
 	# around 10e-7
