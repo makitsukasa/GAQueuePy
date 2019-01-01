@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
-from sggsystem import SGGSystem
 from swapsystem import SwapSystem
 from individual import Individual, State
 import crossoverer
