@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
 from swapsystem import SwapSystem
+from swapsystem2 import SwapSystem2
 from individual import Individual, State
 import crossoverer
 from problem.frontier.sphere import sphere
@@ -45,13 +46,13 @@ def init():
 	max_gradient = 0.0
 
 n = 20
-npop = 12 * n
+npop = 6 * n
 npar = n + 1
-nchi = 8 * n
-step_count = 220000
-loop_count = 1
-problem = rastrigin
-raw_problem = rastrigin
+nchi = 6 * n
+step_count = 27200
+loop_count = 30
+problem = sphere
+raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
@@ -72,21 +73,6 @@ for _ in range(loop_count):
 	if loop_count == 1:
 		plot(step_count, jgg_sys.history,
 				color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
-
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.step(step_count)
-	swap_sys.calc_raw_fitness(raw_problem)
-	best = swap_sys.get_best_individual()
-	if "clamp_rand" in best_list:
-		best_list["clamp_rand"] += best.raw_fitness / loop_count
-	else:
-		best_list["clamp_rand"] = best.raw_fitness / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history,
-				color = 'black', label = 'clamp_rand : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
@@ -112,13 +98,29 @@ for _ in range(loop_count):
 	swap_sys.step(step_count)
 	swap_sys.calc_raw_fitness(raw_problem)
 	best = swap_sys.get_best_individual()
-	if "replace_by_elite_npar" in best_list:
-		best_list["replace_by_elite_npar"] += best.raw_fitness / loop_count
+	if "replace" in best_list:
+		best_list["replace"] += best.raw_fitness / loop_count
 	else:
-		best_list["replace_by_elite_npar"] = best.raw_fitness / loop_count
+		best_list["replace"] = best.raw_fitness / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
-				color = 'orange', label = 'replace_by_elite_npar : {:.10f}'.format(best.raw_fitness))
+				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
+
+	np.random.seed(randseed)
+	swap_sys = SwapSystem2(problem, n, npop, npar, nchi)
+	swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	swap_sys.switch_to_gaq = lambda sys : False
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_by_elites(sys, npar)
+	swap_sys.step(step_count)
+	swap_sys.calc_raw_fitness(raw_problem)
+	best = swap_sys.get_best_individual()
+	if "replace_2" in best_list:
+		best_list["replace_2"] += best.raw_fitness / loop_count
+	else:
+		best_list["replace_2"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, swap_sys.get_active_system().history,
+				color = 'b', label = 'replace_2 : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
