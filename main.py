@@ -45,13 +45,13 @@ def init():
 	init_rough_gmm()
 	max_gradient = 0.0
 
-n = 3
+n = 10
 npop = 20
 npar = n
 nchi = 20
 step_count = 400
-loop_count = 100
-problem = lambda x : rough_gmm_ave(x, 0.25)
+loop_count = 30
+problem = lambda x : rough_gmm_weighted_ave(x, 0.9)
 raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
@@ -129,4 +129,4 @@ for _ in range(loop_count):
 		plt.show()
 
 for key, ave in best_list.items():
-	print(key, ave)
+	print(key, round(ave, 2))
