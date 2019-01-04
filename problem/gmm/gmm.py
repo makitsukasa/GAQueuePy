@@ -31,7 +31,7 @@ def init_rough_gmm():
 	mean = 0.0
 	disc_sum = 0.0
 
-def rough_gmm_ave(x, magnification = 1):
+def rough_gmm_ave(x, magnification = 1.0):
 	global count
 	global mean
 	val = gmm(x)

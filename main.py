@@ -45,14 +45,14 @@ def init():
 	init_rough_gmm()
 	max_gradient = 0.0
 
-n = 20
-npop = 6 * n
-npar = n + 1
-nchi = 6 * n
-step_count = 27200
-loop_count = 30
-problem = sphere
-raw_problem = sphere
+n = 3
+npop = 20
+npar = n
+nchi = 20
+step_count = 400
+loop_count = 100
+problem = lambda x : rough_gmm_ave(x, 0.25)
+raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
