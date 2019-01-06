@@ -22,14 +22,20 @@ def gmm(x):
 count = 0
 mean = 0.0
 disc_sum = 0.0
+history = []
+landmark = None
 
 def init_rough_gmm():
 	global count
 	global mean
 	global disc_sum
+	global history
+	global landmark
 	count = 0
 	mean = 0.0
 	disc_sum = 0.0
+	history = []
+	landmark = {"x" : [], "fitness" : 0, "raw_fitness" : 0.0}
 
 def rough_gmm_ave(x, magnification = 1.0):
 	global count
@@ -56,3 +62,38 @@ def rough_gmm_weighted_ave(x, rate = 0.5):
 	disc_sum = ((1 - rate) * val + rate * disc_sum * (1 - rate ** count)) / (1 - rate ** (count + 1))
 	count += 1
 	return ret
+
+def rough_gmm_compared(x, landmark_pos = 5):
+	global history
+	global landmark
+
+	if not history:
+		landmark = {"x" : x, "fitness" : 0, "raw_fitness" : gmm(x)}
+		history.append(landmark)
+		return 0
+
+	raw_fitness = gmm(x)
+
+	is_better_than_landmark = False
+	if abs(landmark["raw_fitness"] - raw_fitness) < 0.01:
+		if np.random.rand() < 0.5:
+			is_better_than_landmark = True
+	elif landmark["raw_fitness"] > raw_fitness:
+		is_better_than_landmark = True
+
+	if is_better_than_landmark:
+		fitness = landmark["fitness"] - 1
+	else:
+		fitness = landmark["fitness"] + 1
+
+	history.append({"x" : x, "fitness" : fitness, "raw_fitness" : raw_fitness})
+
+	np.random.shuffle(history)
+	history.sort(key = lambda h: h["fitness"])
+
+	if len(history) <= landmark_pos:
+		landmark = history[0]
+	else:
+		landmark = history[landmark_pos]
+
+	return fitness

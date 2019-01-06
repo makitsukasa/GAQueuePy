@@ -10,11 +10,18 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
-from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
+from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, rough_gmm_compared, init_rough_gmm
 from plot import plot
 import warnings
 
 warnings.simplefilter("error", RuntimeWarning)
+
+def gaq_op_plain(x):
+	x.sort(key = lambda i : i.fitness)
+	parents = x[:npar]
+	for p in parents:
+		p.state = State.USED_IN_GAQ
+	return crossoverer.rex(parents, nchi)
 
 def gaq_op_plain_origopt(x):
 	x.sort(key = lambda i : i.fitness)
@@ -43,15 +50,14 @@ def choose_population_replace_by_elites(sys, elites_count):
 
 def init():
 	init_rough_gmm()
-	max_gradient = 0.0
 
-n = 10
+n = 5
 npop = 20
-npar = n
+npar = 5
 nchi = 20
 step_count = 400
 loop_count = 30
-problem = lambda x : rough_gmm_weighted_ave(x, 0.9)
+problem = lambda x : rough_gmm_compared(x, npar)
 raw_problem = gmm
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
@@ -61,6 +67,7 @@ print(title)
 for _ in range(loop_count):
 	randseed = np.random.randint(0x7fffffff)
 
+	init()
 	np.random.seed(randseed)
 	jgg_sys = JGGSystem(problem, n, npop, npar, nchi)
 	jgg_sys.step(step_count)
@@ -74,6 +81,21 @@ for _ in range(loop_count):
 		plot(step_count, jgg_sys.history,
 				color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
 
+	init()
+	np.random.seed(randseed)
+	gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], gaq_op_plain_origopt)
+	gaq_sys.step(step_count)
+	gaq_sys.calc_raw_fitness(raw_problem)
+	best = gaq_sys.get_best_individual()
+	if "gaq" in best_list:
+		best_list["gaq"] += best.raw_fitness / loop_count
+	else:
+		best_list["gaq"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, gaq_sys.history,
+				color = 'pink', label = 'GAQ : {:.10f}'.format(best.raw_fitness))
+
+	init()
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
@@ -90,6 +112,7 @@ for _ in range(loop_count):
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'gray', label = 'throw_gaq : {:.10f}'.format(best.raw_fitness))
 
+	init()
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
@@ -106,6 +129,7 @@ for _ in range(loop_count):
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
 
+	init()
 	np.random.seed(randseed)
 	swap_sys = SwapSystem2(problem, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
