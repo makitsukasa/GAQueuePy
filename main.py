@@ -10,6 +10,10 @@ from problem.frontier.sphere import sphere
 from problem.frontier.ellipsoid import ellipsoid
 from problem.frontier.ackley import ackley
 from problem.frontier.rastrigin import rastrigin
+from problem.frontier.ktablet import ktablet
+from problem.frontier.rosenbrock import rosenbrock
+from problem.frontier.bohachevsky import bohachevsky
+from problem.frontier.schaffer import schaffer
 from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
 from plot import plot
 import warnings
@@ -46,13 +50,13 @@ def init():
 	max_gradient = 0.0
 
 n = 20
-npop = 6 * n
+npop = 9 * n
 npar = n + 1
-nchi = 6 * n
-step_count = 27200
-loop_count = 30
-problem = sphere
-raw_problem = sphere
+nchi = 8 * n
+step_count = 229000
+loop_count = 1
+problem = schaffer
+raw_problem = schaffer
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
