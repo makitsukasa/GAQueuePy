@@ -50,8 +50,8 @@ def init():
 	init_rough_gmm()
 
 best_lists = {}
-problem = lambda x : rough_gmm_weighted_ave(x, 0.5)
-problem_name = "gmm weighted 0.5"
+problem = lambda x : rough_gmm_ave(x, 0.5)
+problem_name = "gmm ave 0.5"
 raw_problem = gmm
 npop = 20
 npar = 5
@@ -59,9 +59,8 @@ nchi = 20
 step_count = 400
 loop_count = 30
 
-for dim in [3, 5, 7, 10]:
+for n in [3, 5, 7, 10]:
 
-	n = dim
 	best_list = {}
 
 	for _ in range(loop_count):
@@ -131,20 +130,13 @@ for dim in [3, 5, 7, 10]:
 		else:
 			best_list["replace_2"] = best.raw_fitness / loop_count
 
-	best_lists[dim] = best_list
-
-for dim in [3, 5, 7, 10]:
-	print("dim : ", dim)
-	for key, ave in best_lists[dim].items():
-		print("\t", key, round(ave, 2))
-
-solution_list = best_lists[3].keys()
+	best_lists[n] = best_list
 
 print(problem_name, "|3D|5D|7D|10D|")
 print("|:--|:--|:--|:--|:--|")
 print("(論文)|-5.71|-3.42|-2.98|-2.04|")
 
-for solution in solution_list:
+for solution in best_lists[3].keys():
 	print(solution, "|", end = "")
 	for dim in [3, 5, 7, 10]:
 		print(round(best_lists[dim][solution], 2), "|", end = "")
