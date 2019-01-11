@@ -54,9 +54,10 @@ def init():
 	init_rough_gmm()
 
 best_lists = {}
+
 n = 20
 npar = n + 1
-loop_count = 1
+loop_count = 30
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	{"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
@@ -64,7 +65,7 @@ problem_list = [
 	{"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	{"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	{"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 6 * n, "nchi" : 6 * n},
-	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 9 * n, "nchi" : 8 * n},
+	{"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 9 * n, "nchi" : 8 * n},
 	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 22 * n, "nchi" : 8 * n},
 ]
 
@@ -77,6 +78,8 @@ for problem_info in problem_list:
 	npop = problem_info["npop"]
 	nchi = problem_info["nchi"]
 	step_count = problem_info["step"]
+	# step_count = problem_info["step"] // 10
+	print(problem_name, "step:", step_count)
 
 	for _ in range(loop_count):
 		randseed = np.random.randint(0x7fffffff)
@@ -155,13 +158,13 @@ print("(x10^10)|", end = "")
 for method_name in method_names:
 	print(method_name, "|", end = "")
 print()
-print("|", end = "")
+print("|--:", end = "")
 for method_name in method_names:
-	print("|", end = "")
-print()
+	print("|--:", end = "")
+print("|")
 
 for problem_name, bests in best_lists.items():
 	print(problem_name, "|", end = "")
 	for method_name in method_names:
-		print(round(bests[method_name] * 10000000000, 0), "|", end = "")
+		print(int(round(bests[method_name] * 10000000000, 0)), "|", end = "")
 	print()
