@@ -74,7 +74,10 @@ class SwapSystem2(object):
 		return ret
 
 	def choose_population_to_next_gaq(self, gaq_sys):
-		return gaq_sys.history[:self.npop]
+		self.gaq_sys.history.sort(key = lambda i : i.birth_year)
+		initial = self.gaq_sys.history[:self.npop]
+		ret = [i for i in initial if i.state != State.USED_IN_GAQ]
+		return ret
 
 	def switch_active_system(self):
 		global fitness_history
