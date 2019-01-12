@@ -10,9 +10,10 @@ class JGGSystem(object):
 	       |------------------------------------------------------
 	"""
 
-	def __init__(self, problem, n, npop, npar, nchi):
+	def __init__(self, problem, raw_problem, n, npop, npar, nchi):
 		self.n = n
 		self.problem = problem
+		self.raw_problem = raw_problem
 		self.npop = npop
 		self.npar = npar
 		self.nchi = nchi
@@ -20,6 +21,8 @@ class JGGSystem(object):
 		self.age = 0
 
 		self.population = [Individual(self.n) for i in range(npop)]
+		for i in self.population:
+			i.raw_fitness = raw_problem(i.gene)
 
 		parents = self.select_parents()
 		self.children_before_eval = crossoverer.rex(parents, self.nchi)
@@ -40,6 +43,7 @@ class JGGSystem(object):
 	def evaluate(self):
 		indiv = self.children_before_eval.pop(-1)
 		indiv.fitness = self.problem(indiv.gene)
+		indiv.raw_fitness = self.raw_problem(indiv.gene)
 		self.children_after_eval.append(indiv)
 		self.history.append(indiv)
 		return indiv
@@ -56,12 +60,8 @@ class JGGSystem(object):
 				for i in self.children_before_eval:
 					i.birth_year = self.age
 
-	def calc_raw_fitness(self, problem):
-		for i in self.history:
-			i.raw_fitness = problem(i.gene)
-
 	def get_best_individual(self):
-		self.history.sort(key=lambda s: s.raw_fitness)
+		self.history.sort(key = lambda s: s.raw_fitness)
 		return self.history[0]
 
 if __name__ == '__main__':

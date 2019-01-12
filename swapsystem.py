@@ -33,7 +33,7 @@ def gaq_op_plain_origopt(x):
 	return crossoverer.rex(x[:n + 1])
 
 class SwapSystem(object):
-	def __init__(self, problem, n, npop, npar, nchi):
+	def __init__(self, problem, raw_problem, n, npop, npar, nchi):
 		global fitness_history
 		fitness_history.clear()
 		self.n = n
@@ -44,9 +44,10 @@ class SwapSystem(object):
 		self.history = []
 		self.is_gaq_active = True
 
-		self.jgg_sys = JGGSystem(problem, n, npop, npar, nchi)
+		self.jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
 		self.gaq_sys = GAQSystem(
 			problem,
+			raw_problem,
 			0,
 			[Individual(n) for i in range(npop)],
 			gaq_op_plain_origopt

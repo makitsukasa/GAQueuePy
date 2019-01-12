@@ -29,8 +29,9 @@ class GAQSystem(object):
 		- mutate    function
 	"""
 
-	def __init__(self, problem, minQueueSize, firstGeneration, op):
+	def __init__(self, problem, raw_problem, minQueueSize, firstGeneration, op):
 		self.problem = problem
+		self.raw_problem = raw_problem
 		self.minQueueSize = minQueueSize
 		self.queue = firstGeneration
 		self.op = op
@@ -39,6 +40,7 @@ class GAQSystem(object):
 
 	def evaluate(self, indiv):
 		indiv.fitness = self.problem(indiv.gene)
+		indiv.raw_fitness = self.raw_problem(indiv.gene)
 		return indiv
 
 	def step(self, count = 1):
@@ -51,10 +53,6 @@ class GAQSystem(object):
 				for i in new_generation:
 					i.birth_year = self.age
 				self.queue.extend(new_generation)
-
-	def calc_raw_fitness(self, problem):
-		for i in self.history:
-			i.raw_fitness = problem(i.gene)
 
 	def get_best_individual(self):
 		self.history.sort(key=lambda s: s.raw_fitness)
