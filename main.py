@@ -72,14 +72,15 @@ n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-goal = 10e-7
-step_count = 100000
-loop_count = 1
+goal = 1e-7
+step_count = 200000
+loop_count = 30
 problem = sphere
 raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
+step_list = {}
 print(title)
 
 for _ in range(loop_count):
@@ -87,12 +88,14 @@ for _ in range(loop_count):
 
 	np.random.seed(randseed)
 	jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
-	jgg_sys.until_goal(goal, step_count)
+	reached = jgg_sys.until_goal(goal, step_count)
 	best = jgg_sys.get_best_individual()
 	if "jgg" in best_list:
 		best_list["jgg"] += best.raw_fitness / loop_count
+		step_list["jgg"] += len(jgg_sys.history) / loop_count
 	else:
 		best_list["jgg"] = best.raw_fitness / loop_count
+		step_list["jgg"] = len(jgg_sys.history) / loop_count
 	if loop_count == 1:
 		plot(step_count, jgg_sys.history,
 				color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
@@ -106,8 +109,10 @@ for _ in range(loop_count):
 	best = swap_sys.get_best_individual()
 	if "throw_gaq" in best_list:
 		best_list["throw_gaq"] += best.raw_fitness / loop_count
+		step_list["throw_gaq"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
 		best_list["throw_gaq"] = best.raw_fitness / loop_count
+		step_list["throw_gaq"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'gray', label = 'throw_gaq : {:.10f}'.format(best.raw_fitness))
@@ -121,8 +126,10 @@ for _ in range(loop_count):
 	best = swap_sys.get_best_individual()
 	if "replace_parents" in best_list:
 		best_list["replace_parents"] += best.raw_fitness / loop_count
+		step_list["replace_parents"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
 		best_list["replace_parents"] = best.raw_fitness / loop_count
+		step_list["replace_parents"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'orange', label = 'replace_parents : {:.10f}'.format(best.raw_fitness))
@@ -134,10 +141,12 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
 	swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "replace_parents_2" in best_list:
-		best_list["replace_parents_2"] += best.raw_fitness / loop_count
+	if "replace_parents2" in best_list:
+		best_list["replace_parents2"] += best.raw_fitness / loop_count
+		step_list["replace_parents2"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
-		best_list["replace_parents_2"] = best.raw_fitness / loop_count
+		best_list["replace_parents2"] = best.raw_fitness / loop_count
+		step_list["replace_parents2"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'yellow', label = 'replace_parents_2 : {:.10f}'.format(best.raw_fitness))
@@ -149,4 +158,4 @@ for _ in range(loop_count):
 		plt.show()
 
 for key, ave in best_list.items():
-	print(key, ave)
+	print(key, step_list[key], ave)
