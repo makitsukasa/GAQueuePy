@@ -67,7 +67,7 @@ class JGGSystem(object):
 			if len(self.children_before_eval) == 0:
 				if self.get_best_individual().raw_fitness < goal:
 					print("goal")
-					return
+					return True
 				new_generation = self.survival_selection()
 				self.population.extend(new_generation)
 				parents = self.select_parents()
@@ -75,6 +75,7 @@ class JGGSystem(object):
 				for i in self.children_before_eval:
 					i.birth_year = self.age
 		print("time is up")
+		return False
 
 	def get_best_individual(self):
 		self.history.sort(key = lambda s: s.raw_fitness)

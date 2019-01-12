@@ -125,8 +125,9 @@ class SwapSystem2(object):
 				active_system.step()
 				self.switch_active_system()
 			else:
-				active_system.until_goal(goal, max_count - self.gaq_sys.age)
-				return
+				return active_system.until_goal(goal, max_count - self.gaq_sys.age)
+
+		return False
 
 	def get_best_individual(self):
 		self.get_active_system().history.sort(key=lambda s: s.raw_fitness)
