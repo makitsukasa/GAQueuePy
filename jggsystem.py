@@ -60,6 +60,22 @@ class JGGSystem(object):
 				for i in self.children_before_eval:
 					i.birth_year = self.age
 
+	def until_goal(self, goal = 10e-7, max_count = 200000):
+		for i in range(max_count):
+			self.age += 1
+			self.evaluate()
+			if len(self.children_before_eval) == 0:
+				if self.get_best_individual().raw_fitness < goal:
+					print("goal")
+					return
+				new_generation = self.survival_selection()
+				self.population.extend(new_generation)
+				parents = self.select_parents()
+				self.children_before_eval = crossoverer.rex(parents, self.nchi)
+				for i in self.children_before_eval:
+					i.birth_year = self.age
+		print("time is up")
+
 	def get_best_individual(self):
 		self.history.sort(key = lambda s: s.raw_fitness)
 		return self.history[0]

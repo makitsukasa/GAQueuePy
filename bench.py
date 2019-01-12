@@ -77,8 +77,9 @@ for problem_info in problem_list:
 	problem_name = problem_info["problem_name"]
 	npop = problem_info["npop"]
 	nchi = problem_info["nchi"]
-	step_count = problem_info["step"]
-	# step_count = problem_info["step"] // 10
+	# step_count = problem_info["step"]
+	step_count = problem_info["step"] // 10
+	# step_count = 100 * n
 	print(problem_name, "step:", step_count)
 
 	for _ in range(loop_count):
@@ -154,7 +155,7 @@ method_names = list(list(best_lists.values())[0].keys())
 
 print("loop", loop_count)
 
-print("(x10^10)|", end = "")
+print("(x10^2)|", end = "")
 for method_name in method_names:
 	print(method_name, "|", end = "")
 print()
@@ -166,5 +167,5 @@ print("|")
 for problem_name, bests in best_lists.items():
 	print(problem_name, "|", end = "")
 	for method_name in method_names:
-		print(int(round(bests[method_name] * 10000000000, 0)), "|", end = "")
+		print(int(round(bests[method_name] * 100, 0)), "|", end = "")
 	print()

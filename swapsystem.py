@@ -94,8 +94,15 @@ class SwapSystem(object):
 			self.get_active_system().step()
 			self.switch_active_system()
 
-	def calc_raw_fitness(self, problem):
-		self.get_active_system().calc_raw_fitness(problem)
+	def until_goal(self, goal = 10e-7, max_count = 200000):
+		for _ in range(max_count):
+			active_system = self.get_active_system()
+			if not hasattr(active_system, "until_goal"):
+				active_system.step()
+				self.switch_active_system()
+			else:
+				active_system.until_goal(goal, max_count - self.gaq_sys.age)
+				return
 
 	def get_best_individual(self):
 		self.get_active_system().history.sort(key=lambda s: s.raw_fitness)
