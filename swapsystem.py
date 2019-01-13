@@ -74,7 +74,7 @@ class SwapSystem(object):
 		if self.is_gaq_active:
 			if not self.switch_to_jgg(self.gaq_sys):
 				return
-			# print("JGG->GAQ", self.gaq_sys.age)
+			# print("GAQ->JGG", self.gaq_sys.age)
 			self.jgg_sys.history = self.gaq_sys.history[:]
 			self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
 			self.jgg_sys.age = self.gaq_sys.age
@@ -83,7 +83,7 @@ class SwapSystem(object):
 		else:
 			if not self.switch_to_gaq(self.jgg_sys.history):
 				return
-			# print("GAQ->JGG", self.jgg_sys.age)
+			# print("JGG->GAQ", self.jgg_sys.age)
 			self.gaq_sys.history = self.jgg_sys.history
 			self.gaq_sys.age = self.jgg_sys.age
 			self.is_gaq_active = True
