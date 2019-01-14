@@ -101,6 +101,7 @@ class SwapSystem2(object):
 				self.jgg_sys.history = self.history[:]
 				self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
 				self.jgg_sys.age = self.gaq_sys.age
+				self.jgg_sys.generate_first_children()
 				self.is_gaq_active = False
 				fitness_history.clear()
 		else:

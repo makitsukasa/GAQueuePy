@@ -24,6 +24,9 @@ class JGGSystem(object):
 		for i in self.population:
 			i.raw_fitness = raw_problem(i.gene)
 
+		self.generate_first_children()
+
+	def generate_first_children(self):
 		parents = self.select_parents()
 		self.children_before_eval = crossoverer.rex(parents, self.nchi)
 		self.children_after_eval = []
@@ -66,7 +69,7 @@ class JGGSystem(object):
 			self.evaluate()
 			if len(self.children_before_eval) == 0:
 				if self.get_best_individual().raw_fitness < goal:
-					print("goal")
+					# print("goal")
 					return True
 				new_generation = self.survival_selection()
 				self.population.extend(new_generation)

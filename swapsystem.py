@@ -44,7 +44,6 @@ class SwapSystem(object):
 		self.history = []
 		self.is_gaq_active = True
 
-		self.jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
 		self.gaq_sys = GAQSystem(
 			problem,
 			raw_problem,
@@ -52,6 +51,7 @@ class SwapSystem(object):
 			[Individual(n) for i in range(npop)],
 			gaq_op_plain_origopt
 		)
+		self.jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
 
 	def get_active_system(self):
 		if self.is_gaq_active:
@@ -78,6 +78,7 @@ class SwapSystem(object):
 			self.jgg_sys.history = self.gaq_sys.history[:]
 			self.jgg_sys.population = self.choose_population_to_jgg(self.gaq_sys)
 			self.jgg_sys.age = self.gaq_sys.age
+			self.jgg_sys.generate_first_children()
 			self.is_gaq_active = False
 			fitness_history.clear()
 		else:
