@@ -73,10 +73,10 @@ npop = 6 * n
 npar = n + 1
 nchi = 6 * n
 goal = 1e-7
-step_count = 200000
-loop_count = 30
-problem = sphere
-raw_problem = sphere
+step_count = 5540
+loop_count = 1
+problem = ackley
+raw_problem = ackley
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
@@ -124,15 +124,15 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
 	swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "replace_parents" in best_list:
-		best_list["replace_parents"] += best.raw_fitness / loop_count
-		step_list["replace_parents"] += len(swap_sys.get_active_system().history) / loop_count
+	if "replace" in best_list:
+		best_list["replace"] += best.raw_fitness / loop_count
+		step_list["replace"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
-		best_list["replace_parents"] = best.raw_fitness / loop_count
-		step_list["replace_parents"] = len(swap_sys.get_active_system().history) / loop_count
+		best_list["replace"] = best.raw_fitness / loop_count
+		step_list["replace"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
-				color = 'orange', label = 'replace_parents : {:.10f}'.format(best.raw_fitness))
+				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
 	swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
@@ -141,20 +141,20 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
 	swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "replace_parents2" in best_list:
-		best_list["replace_parents2"] += best.raw_fitness / loop_count
-		step_list["replace_parents2"] += len(swap_sys.get_active_system().history) / loop_count
+	if "replace_2" in best_list:
+		best_list["replace_2"] += best.raw_fitness / loop_count
+		step_list["replace_2"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
-		best_list["replace_parents2"] = best.raw_fitness / loop_count
-		step_list["replace_parents2"] = len(swap_sys.get_active_system().history) / loop_count
+		best_list["replace_2"] = best.raw_fitness / loop_count
+		step_list["replace_2"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
-				color = 'yellow', label = 'replace_parents_2 : {:.10f}'.format(best.raw_fitness))
+				color = 'yellow', label = 'replace_2 : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
 		plt.title(title)
-		# plt.legend()
+		plt.legend()
 		plt.show()
 
 for key, ave in best_list.items():

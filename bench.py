@@ -58,6 +58,7 @@ best_lists = {}
 n = 20
 npar = n + 1
 loop_count = 30
+goal = 1e-7
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	{"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
@@ -77,9 +78,10 @@ for problem_info in problem_list:
 	problem_name = problem_info["problem_name"]
 	npop = problem_info["npop"]
 	nchi = problem_info["nchi"]
-	# step_count = problem_info["step"]
-	step_count = problem_info["step"] // 10
+	step_count = problem_info["step"]
+	# step_count = problem_info["step"] // 10
 	# step_count = 100 * n
+	# step_count = 200000
 	print(problem_name, "step:", step_count)
 
 	for _ in range(loop_count):
@@ -87,9 +89,8 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		jgg_sys = JGGSystem(problem, n, npop, npar, nchi)
+		jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
 		jgg_sys.step(step_count)
-		jgg_sys.calc_raw_fitness(raw_problem)
 		best = jgg_sys.get_best_individual()
 		if "jgg" in best_list:
 			best_list["jgg"] += best.raw_fitness / loop_count
@@ -98,9 +99,8 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		gaq_sys = GAQSystem(problem, 0, [Individual(n) for i in range(npop)], gaq_op_plain_origopt)
+		gaq_sys = GAQSystem(problem, raw_problem, 0, [Individual(n) for i in range(npop)], gaq_op_plain_origopt)
 		gaq_sys.step(step_count)
-		gaq_sys.calc_raw_fitness(raw_problem)
 		best = gaq_sys.get_best_individual()
 		if "gaq" in best_list:
 			best_list["gaq"] += best.raw_fitness / loop_count
@@ -109,12 +109,11 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = choose_population_throw_gaq
 		swap_sys.step(step_count)
-		swap_sys.calc_raw_fitness(raw_problem)
 		best = swap_sys.get_best_individual()
 		if "throw_gaq" in best_list:
 			best_list["throw_gaq"] += best.raw_fitness / loop_count
@@ -123,12 +122,11 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_by_elites(sys, npar)
 		swap_sys.step(step_count)
-		swap_sys.calc_raw_fitness(raw_problem)
 		best = swap_sys.get_best_individual()
 		if "replace" in best_list:
 			best_list["replace"] += best.raw_fitness / loop_count
@@ -137,12 +135,11 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem2(problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_by_elites(sys, npar)
 		swap_sys.step(step_count)
-		swap_sys.calc_raw_fitness(raw_problem)
 		best = swap_sys.get_best_individual()
 		if "replace_2" in best_list:
 			best_list["replace_2"] += best.raw_fitness / loop_count
@@ -155,7 +152,7 @@ method_names = list(list(best_lists.values())[0].keys())
 
 print("loop", loop_count)
 
-print("(x10^2)|", end = "")
+print("(x10^10)|", end = "")
 for method_name in method_names:
 	print(method_name, "|", end = "")
 print()
@@ -167,5 +164,5 @@ print("|")
 for problem_name, bests in best_lists.items():
 	print(problem_name, "|", end = "")
 	for method_name in method_names:
-		print(int(round(bests[method_name] * 100, 0)), "|", end = "")
+		print(int(round(bests[method_name] * 10000000000, 0)), "|", end = "")
 	print()
