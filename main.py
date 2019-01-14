@@ -72,15 +72,13 @@ n = 20
 npop = 6 * n
 npar = n + 1
 nchi = 6 * n
-goal = 1e-7
-step_count = 5540
-loop_count = 1
+step_count = 55400
+loop_count = 30
 problem = ackley
 raw_problem = ackley
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
-step_list = {}
 print(title)
 
 for _ in range(loop_count):
@@ -88,14 +86,12 @@ for _ in range(loop_count):
 
 	np.random.seed(randseed)
 	jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
-	reached = jgg_sys.until_goal(goal, step_count)
+	jgg_sys.step(step_count)
 	best = jgg_sys.get_best_individual()
 	if "jgg" in best_list:
 		best_list["jgg"] += best.raw_fitness / loop_count
-		step_list["jgg"] += len(jgg_sys.history) / loop_count
 	else:
 		best_list["jgg"] = best.raw_fitness / loop_count
-		step_list["jgg"] = len(jgg_sys.history) / loop_count
 	if loop_count == 1:
 		plot(step_count, jgg_sys.history,
 				color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
@@ -105,14 +101,12 @@ for _ in range(loop_count):
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
 	swap_sys.switch_to_gaq = lambda sys : False
 	swap_sys.choose_population_to_jgg = choose_population_throw_gaq
-	swap_sys.until_goal(goal, step_count)
+	swap_sys.step(step_count)
 	best = swap_sys.get_best_individual()
 	if "throw_gaq" in best_list:
 		best_list["throw_gaq"] += best.raw_fitness / loop_count
-		step_list["throw_gaq"] += len(swap_sys.get_active_system().history) / loop_count
 	else:
 		best_list["throw_gaq"] = best.raw_fitness / loop_count
-		step_list["throw_gaq"] = len(swap_sys.get_active_system().history) / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'gray', label = 'throw_gaq : {:.10f}'.format(best.raw_fitness))
@@ -122,34 +116,90 @@ for _ in range(loop_count):
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
 	swap_sys.switch_to_gaq = lambda sys : False
 	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
-	swap_sys.until_goal(goal, step_count)
+	swap_sys.step(step_count)
 	best = swap_sys.get_best_individual()
-	if "replace" in best_list:
-		best_list["replace"] += best.raw_fitness / loop_count
-		step_list["replace"] += len(swap_sys.get_active_system().history) / loop_count
+	if "replace_parents" in best_list:
+		best_list["replace_parents"] += best.raw_fitness / loop_count
 	else:
-		best_list["replace"] = best.raw_fitness / loop_count
-		step_list["replace"] = len(swap_sys.get_active_system().history) / loop_count
+		best_list["replace_parents"] = best.raw_fitness / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
-				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
+				color = 'orange', label = 'replace_parents : {:.10f}'.format(best.raw_fitness))
 
 	np.random.seed(randseed)
 	swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
 	swap_sys.switch_to_gaq = lambda sys : False
 	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
-	swap_sys.until_goal(goal, step_count)
+	swap_sys.step(step_count)
 	best = swap_sys.get_best_individual()
-	if "replace_2" in best_list:
-		best_list["replace_2"] += best.raw_fitness / loop_count
-		step_list["replace_2"] += len(swap_sys.get_active_system().history) / loop_count
+	if "replace_parents_2" in best_list:
+		best_list["replace_parents_2"] += best.raw_fitness / loop_count
 	else:
-		best_list["replace_2"] = best.raw_fitness / loop_count
-		step_list["replace_2"] = len(swap_sys.get_active_system().history) / loop_count
+		best_list["replace_parents_2"] = best.raw_fitness / loop_count
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
-				color = 'yellow', label = 'replace_2 : {:.10f}'.format(best.raw_fitness))
+				color = 'yellow', label = 'replace_parents_2 : {:.10f}'.format(best.raw_fitness))
+
+	np.random.seed(randseed)
+	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+	swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	swap_sys.switch_to_gaq = lambda sys : False
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar)
+	swap_sys.step(step_count)
+	best = swap_sys.get_best_individual()
+	if "replace_random" in best_list:
+		best_list["replace_random"] += best.raw_fitness / loop_count
+	else:
+		best_list["replace_random"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, swap_sys.get_active_system().history,
+				color = 'green', label = 'replace_random : {:.10f}'.format(best.raw_fitness))
+
+	np.random.seed(randseed)
+	swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
+	swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	swap_sys.switch_to_gaq = lambda sys : False
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar)
+	swap_sys.step(step_count)
+	best = swap_sys.get_best_individual()
+	if "replace_random_2" in best_list:
+		best_list["replace_random_2"] += best.raw_fitness / loop_count
+	else:
+		best_list["replace_random_2"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, swap_sys.get_active_system().history,
+				color = 'greenyellow', label = 'replace_random_2 : {:.10f}'.format(best.raw_fitness))
+
+	np.random.seed(randseed)
+	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+	swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	swap_sys.switch_to_gaq = lambda sys : False
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_bottom_by_elites(sys, npar)
+	swap_sys.step(step_count)
+	best = swap_sys.get_best_individual()
+	if "replace_bottom" in best_list:
+		best_list["replace_bottom"] += best.raw_fitness / loop_count
+	else:
+		best_list["replace_bottom"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, swap_sys.get_active_system().history,
+				color = 'blue', label = 'replace_bottom : {:.10f}'.format(best.raw_fitness))
+
+	np.random.seed(randseed)
+	swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
+	swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	swap_sys.switch_to_gaq = lambda sys : False
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_bottom_by_elites(sys, npar)
+	swap_sys.step(step_count)
+	best = swap_sys.get_best_individual()
+	if "replace_bottom_2" in best_list:
+		best_list["replace_bottom_2"] += best.raw_fitness / loop_count
+	else:
+		best_list["replace_bottom_2"] = best.raw_fitness / loop_count
+	if loop_count == 1:
+		plot(step_count, swap_sys.get_active_system().history,
+				color = 'cyan', label = 'replace_bottom_2 : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
@@ -158,4 +208,4 @@ for _ in range(loop_count):
 		plt.show()
 
 for key, ave in best_list.items():
-	print(key, step_list[key], ave)
+	print(key, ave)
