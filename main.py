@@ -32,15 +32,13 @@ def choose_population_throw_gaq(sys):
 	return sys.history[:npop]
 
 def choose_population_replace_parents_by_elites(sys, elites_count):
+	np.random.shuffle(sys.history)
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
-	np.random.shuffle(sys.history)
-	ret = []
-	for i in initial:
-		if elites_count > 0 and i.state == State.USED_IN_GAQ:
-			elites_count -= 1
-		else:
-			ret.append(i)
+	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
+	unmarried = [i for i in initial if i.state != State.USED_IN_GAQ]
+	ret = unmarried
+	ret.extend(parents[elites_count:])
 	sys.history.sort(key = lambda i : i.fitness)
 	ret.extend(sys.history[:elites_count])
 	return ret
@@ -73,10 +71,10 @@ npop = 6 * n
 npar = n + 1
 nchi = 6 * n
 goal = 1e-7
-step_count = 5540
+step_count = 250000
 loop_count = 1
-problem = ackley
-raw_problem = ackley
+problem = sphere
+raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
@@ -121,7 +119,7 @@ for _ in range(loop_count):
 	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
 	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
+	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
 	swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
 	if "replace" in best_list:
@@ -133,23 +131,6 @@ for _ in range(loop_count):
 	if loop_count == 1:
 		plot(step_count, swap_sys.get_active_system().history,
 				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
-
-	np.random.seed(randseed)
-	swap_sys = SwapSystem2(problem, raw_problem, n, npop, npar, nchi)
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
-	swap_sys.until_goal(goal, step_count)
-	best = swap_sys.get_best_individual()
-	if "replace_2" in best_list:
-		best_list["replace_2"] += best.raw_fitness / loop_count
-		step_list["replace_2"] += len(swap_sys.get_active_system().history) / loop_count
-	else:
-		best_list["replace_2"] = best.raw_fitness / loop_count
-		step_list["replace_2"] = len(swap_sys.get_active_system().history) / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history,
-				color = 'yellow', label = 'replace_2 : {:.10f}'.format(best.raw_fitness))
 
 	if loop_count == 1:
 		# plt.axis(xmin = 0, ymin = 0)
