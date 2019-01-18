@@ -67,14 +67,14 @@ def init():
 	max_gradient = 0.0
 
 n = 20
-npop = 6 * n
+npop = 8 * n
 npar = n + 1
 nchi = 6 * n
 goal = 1e-7
 step_count = 250000
 loop_count = 1
-problem = sphere
-raw_problem = sphere
+problem = ktablet
+raw_problem = ktablet
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
