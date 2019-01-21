@@ -53,19 +53,24 @@ def init():
 
 best_lists = {}
 step_lists = {}
+league = {}
+for team in ["jgg", "throw", "replace"]:
+	league[team] = {}
+	for enem in ["jgg", "throw", "replace"]:
+		league[team][enem] = 0
 
 n = 20
 npar = n + 1
-loop_count = 30
+loop_count = 50
 goal = 1e-7
 problem_list = [
-	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
-	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	{"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
-	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
-	{"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	{"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
-	{"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
+	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	# # {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
+	# # {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
+	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
+	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
 	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
@@ -73,6 +78,7 @@ for problem_info in problem_list:
 
 	best_list = {}
 	step_list = {}
+	league_score = {}
 	problem = problem_info["problem"]
 	raw_problem = problem_info["problem"]
 	problem_name = problem_info["problem_name"]
@@ -80,8 +86,8 @@ for problem_info in problem_list:
 	nchi = problem_info["nchi"]
 	# step_count = problem_info["step"]
 	# step_count = problem_info["step"] // 10
-	step_count = 100 * n
-	# step_count = 200000
+	# step_count = 100 * n
+	step_count = 300000
 	print(problem_name, "step:", step_count)
 
 	for _ in range(loop_count):
@@ -98,6 +104,7 @@ for problem_info in problem_list:
 		else:
 			best_list["jgg"] = best.raw_fitness / loop_count
 			step_list["jgg"] = float(len(jgg_sys.history)) / loop_count
+		league_score["jgg"] = len(jgg_sys.history)
 
 		init()
 		np.random.seed(randseed)
@@ -107,12 +114,13 @@ for problem_info in problem_list:
 		swap_sys.choose_population_to_jgg = choose_population_throw_gaq
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
-		if "throw_gaq" in best_list:
-			best_list["throw_gaq"] += best.raw_fitness / loop_count
-			step_list["throw_gaq"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		if "throw" in best_list:
+			best_list["throw"] += best.raw_fitness / loop_count
+			step_list["throw"] += float(len(swap_sys.get_active_system().history)) / loop_count
 		else:
-			best_list["throw_gaq"] = best.raw_fitness / loop_count
-			step_list["throw_gaq"] = float(len(swap_sys.get_active_system().history)) / loop_count
+			best_list["throw"] = best.raw_fitness / loop_count
+			step_list["throw"] = float(len(swap_sys.get_active_system().history)) / loop_count
+		league_score["throw"] = len(swap_sys.get_active_system().history)
 
 		init()
 		np.random.seed(randseed)
@@ -128,27 +136,30 @@ for problem_info in problem_list:
 		else:
 			best_list["replace"] = best.raw_fitness / loop_count
 			step_list["replace"] = float(len(swap_sys.get_active_system().history)) / loop_count
+		league_score["replace"] = len(swap_sys.get_active_system().history)
+
+		for team in league_score:
+			for enem in league_score:
+				if team == enem:
+					continue
+				elif league_score[team] < league_score[enem]:
+					league[team][enem] += 1
 
 	best_lists[problem_name] = best_list
 	step_lists[problem_name] = step_list
 
 method_names = list(list(best_lists.values())[0].keys())
 
-print("loop", loop_count)
-
-print("(x10^2)|", end = "")
-for method_name in method_names:
-	print(method_name, "|", end = "")
-print()
-print("|--:", end = "")
-for method_name in method_names:
-	print("|--:", end = "")
+print("|", end = "")
+for team in league:
+	print("|", team, end = "")
 print("|")
-
-for problem_name, bests in best_lists.items():
-	print(problem_name, "|", end = "")
-	for method_name in method_names:
-		# print(int(round(bests[method_name] * 100, 0)), "/",
-		# 	step_lists[problem_name][method_name], "|", end = "")
-		print(int(round(bests[method_name] * 100, 0)), "|", end = "")
-	print()
+print("|--:|--:|--:|--:|")
+for team in league:
+	print(team, end = "")
+	for enem in league:
+		if team == enem:
+			print("|-", end = "")
+		else:
+			print("|", league[team][enem], end = "")
+	print("|")
