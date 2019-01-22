@@ -32,20 +32,28 @@ def gaq_op_plain_origopt(x):
 		p.state = State.USED_IN_GAQ
 	return crossoverer.rex(parents)
 
-def choose_population_throw_gaq(sys):
+def throw_generated(sys):
 	sys.history.sort(key = lambda i : i.birth_year)
 	return sys.history[:npop]
 
-def choose_population_replace_parents_by_elites(sys, elites_count):
-	np.random.shuffle(sys.history)
+def throw_parents(sys, throw_count):
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
 	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
-	unmarried = [i for i in initial if i.state != State.USED_IN_GAQ]
-	ret = unmarried
-	ret.extend(parents[elites_count:])
+	ret = [i for i in initial if i.state != State.USED_IN_GAQ]
+	ret.extend(parents[throw_count:])
+	return ret
+
+def pick_elites(sys, elites_count):
 	sys.history.sort(key = lambda i : i.fitness)
-	ret.extend(sys.history[:elites_count])
+	return sys.history[:elites_count]
+
+def choose_population_throw_gaq(sys):
+	return throw_generated(sys)
+
+def choose_population_replace_parents_by_elites(sys, count):
+	ret = throw_parents(sys, count)
+	ret.extend(pick_elites(sys, count))
 	return ret
 
 def init():
@@ -56,17 +64,17 @@ step_lists = {}
 
 n = 20
 npar = n + 1
-loop_count = 30
+loop_count = 1
 goal = 1e-7
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	{"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
+	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
-	{"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	{"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
-	{"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
-	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
+	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
+	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
+	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
 for problem_info in problem_list:
