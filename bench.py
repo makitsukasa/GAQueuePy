@@ -36,23 +36,33 @@ def throw_generated(sys):
 	sys.history.sort(key = lambda i : i.birth_year)
 	return sys.history[:npop]
 
-def throw_parents(sys, throw_count):
+def throw_parents(sys, count):
+	np.random.shuffle(sys.history)
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
 	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
 	ret = [i for i in initial if i.state != State.USED_IN_GAQ]
-	ret.extend(parents[throw_count:])
+	ret.extend(parents[count:])
 	return ret
 
-def pick_elites(sys, elites_count):
+def throw_random(sys, count):
+	np.random.shuffle(sys.history)
+	return sys.history[count:]
+
+def pick_elites(sys, count):
 	sys.history.sort(key = lambda i : i.fitness)
-	return sys.history[:elites_count]
+	return sys.history[:count]
 
 def choose_population_throw_gaq(sys):
 	return throw_generated(sys)
 
 def choose_population_replace_parents_by_elites(sys, count):
 	ret = throw_parents(sys, count)
+	ret.extend(pick_elites(sys, count))
+	return ret
+
+def choose_population_replace_random_by_elites(sys, count):
+	ret = throw_random(sys, count)
 	ret.extend(pick_elites(sys, count))
 	return ret
 
@@ -127,15 +137,60 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if "replace_parents" in best_list:
+			best_list["replace_parents"] += best.raw_fitness / loop_count
+			step_list["replace_parents"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_parents"] = best.raw_fitness / loop_count
+			step_list["replace_parents"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
-		if "replace" in best_list:
-			best_list["replace"] += best.raw_fitness / loop_count
-			step_list["replace"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		if "replace_parents_1/3" in best_list:
+			best_list["replace_parents_1/3"] += best.raw_fitness / loop_count
+			step_list["replace_parents_1/3"] += float(len(swap_sys.get_active_system().history)) / loop_count
 		else:
-			best_list["replace"] = best.raw_fitness / loop_count
-			step_list["replace"] = float(len(swap_sys.get_active_system().history)) / loop_count
+			best_list["replace_parents_1/3"] = best.raw_fitness / loop_count
+			step_list["replace_parents_1/3"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if "replace_random" in best_list:
+			best_list["replace_random"] += best.raw_fitness / loop_count
+			step_list["replace_random"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_random"] = best.raw_fitness / loop_count
+			step_list["replace_random"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar // 3)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if "replace_random_1/3" in best_list:
+			best_list["replace_random_1/3"] += best.raw_fitness / loop_count
+			step_list["replace_random_1/3"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_random_1/3"] = best.raw_fitness / loop_count
+			step_list["replace_random_1/3"] = float(len(swap_sys.get_active_system().history)) / loop_count
 
 	best_lists[problem_name] = best_list
 	step_lists[problem_name] = step_list
