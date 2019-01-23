@@ -130,6 +130,21 @@ for problem_info in problem_list:
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
+		if "replace_1/3" in best_list:
+			best_list["replace_1/3"] += best.raw_fitness / loop_count
+			step_list["replace_1/3"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_1/3"] = best.raw_fitness / loop_count
+			step_list["replace_1/3"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
 		if "replace" in best_list:
 			best_list["replace"] += best.raw_fitness / loop_count
 			step_list["replace"] += float(len(swap_sys.get_active_system().history)) / loop_count
