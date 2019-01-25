@@ -15,7 +15,7 @@ from problem.frontier.rosenbrock import rosenbrock
 from problem.frontier.bohachevsky import bohachevsky
 from problem.frontier.schaffer import schaffer
 from problem.gmm.gmm import gmm, rough_gmm_ave, rough_gmm_weighted_ave, init_rough_gmm
-from plot import plot
+from plot import plot, plot_error
 import warnings
 
 warnings.simplefilter("error", RuntimeWarning)
@@ -72,13 +72,14 @@ npar = n + 1
 nchi = 6 * n
 goal = 1e-7
 step_count = 250000
-loop_count = 1
-problem = ktablet
-raw_problem = ktablet
+loop_count = 10
+problem = sphere
+raw_problem = sphere
 title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
 	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 best_list = {}
 step_list = {}
+histories = {"jgg" : [], "throw_gaq" : [], "replace" : []}
 print(title)
 
 for _ in range(loop_count):
@@ -94,9 +95,7 @@ for _ in range(loop_count):
 	else:
 		best_list["jgg"] = best.raw_fitness / loop_count
 		step_list["jgg"] = len(jgg_sys.history) / loop_count
-	if loop_count == 1:
-		plot(step_count, jgg_sys.history,
-				color = 'r', label = 'JGG : {:.10f}'.format(best.raw_fitness))
+	histories["jgg"].append(jgg_sys.history)
 
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
@@ -111,9 +110,7 @@ for _ in range(loop_count):
 	else:
 		best_list["throw_gaq"] = best.raw_fitness / loop_count
 		step_list["throw_gaq"] = len(swap_sys.get_active_system().history) / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history,
-				color = 'gray', label = 'throw_gaq : {:.10f}'.format(best.raw_fitness))
+	histories["throw_gaq"].append(jgg_sys.history)
 
 	np.random.seed(randseed)
 	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
@@ -128,15 +125,15 @@ for _ in range(loop_count):
 	else:
 		best_list["replace"] = best.raw_fitness / loop_count
 		step_list["replace"] = len(swap_sys.get_active_system().history) / loop_count
-	if loop_count == 1:
-		plot(step_count, swap_sys.get_active_system().history,
-				color = 'orange', label = 'replace : {:.10f}'.format(best.raw_fitness))
+	histories["replace"].append(jgg_sys.history)
 
-	if loop_count == 1:
-		# plt.axis(xmin = 0, ymin = 0)
-		plt.title(title)
-		plt.legend()
-		plt.show()
+for method in histories:
+	plot_error(histories[method])
+
+# plt.axis(xmin = 0, ymin = 0)
+plt.title(title)
+plt.legend()
+plt.show()
 
 for key, ave in best_list.items():
 	print(key, step_list[key], ave)
