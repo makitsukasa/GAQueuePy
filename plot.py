@@ -24,17 +24,20 @@ def plot_error(histories, color = 'b', linestyle = '-', label = ''):
 		history.sort(key = lambda i: i.birth_year if i.birth_year is not None else -1)
 		v = max(len(history), v)
 	histories_T = np.array(histories).transpose()
+	print(len(histories_T))
 	raw_data = []
+	raw_error = []
 	for period in histories_T:
 		fitnesses = []
 		for i in period:
 			fitnesses.append(i.raw_fitness)
-		raw_data = mean(fitnesses)
-		raw_error = stdev(fitnesses)
+		print(len(fitnesses))
+		raw_data.append(mean(fitnesses))
+		raw_error.append(stdev(fitnesses))
 	error = np.convolve(raw_error, np.ones(v) / v, mode = 'vaild')
 	data = np.convolve(raw_data, np.ones(v) / v, mode = 'vaild')
 	x = range(len(data))
 	plt.yscale("log")
-	# plt.plot(x[:len(data)], data, linewidth = 0.5, color = color, linestyle = linestyle, label = label)
-	plt.errorbar(x[:len(data)], data, yerr = error, linewidth = 0.5, color = color, linestyle = linestyle, label = label)
+	# plt.errorbar(x[:len(data)], data, yerr = error, linewidth = 0.5, color = color, linestyle = linestyle, label = label)
+	plt.plot(x[:len(data)], data, linewidth = 0.5, color = color, linestyle = linestyle, label = label)
 	# plt.plot(x[:len(raw_data)], raw_data, linewidth = 0.5, color = color, label = label)
