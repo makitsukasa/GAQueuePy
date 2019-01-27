@@ -45,9 +45,19 @@ def throw_parents(sys, count):
 	ret.extend(parents[count:])
 	return ret
 
+def throw_loser(sys, count):
+	np.random.shuffle(sys.history)
+	sys.history.sort(key = lambda i : i.birth_year)
+	initial = sys.history[:npop]
+	initial.sort(key = lambda i : i.fitness)
+	return initial[count:]
+
 def throw_random(sys, count):
 	np.random.shuffle(sys.history)
-	return sys.history[count:]
+	sys.history.sort(key = lambda i : i.birth_year)
+	initial = sys.history[:npop]
+	np.random.shuffle(initial)
+	return initial[count:]
 
 def pick_elites(sys, count):
 	sys.history.sort(key = lambda i : i.fitness)
@@ -66,6 +76,11 @@ def choose_population_replace_random_by_elites(sys, count):
 	ret.extend(pick_elites(sys, count))
 	return ret
 
+def choose_population_replace_loser_by_elites(sys, count):
+	ret = throw_loser(sys, count)
+	ret.extend(pick_elites(sys, count))
+	return ret
+
 def init():
 	init_rough_gmm()
 
@@ -74,7 +89,7 @@ step_lists = {}
 
 n = 20
 npar = n + 1
-loop_count = 1
+loop_count = 30
 goal = 1e-7
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
@@ -192,6 +207,36 @@ for problem_info in problem_list:
 			best_list["replace_random_1/3"] = best.raw_fitness / loop_count
 			step_list["replace_random_1/3"] = float(len(swap_sys.get_active_system().history)) / loop_count
 
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if "replace_loser" in best_list:
+			best_list["replace_loser"] += best.raw_fitness / loop_count
+			step_list["replace_loser"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_loser"] = best.raw_fitness / loop_count
+			step_list["replace_loser"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar // 3)
+		swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if "replace_loser_1/3" in best_list:
+			best_list["replace_loser_1/3"] += best.raw_fitness / loop_count
+			step_list["replace_loser_1/3"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		else:
+			best_list["replace_loser_1/3"] = best.raw_fitness / loop_count
+			step_list["replace_loser_1/3"] = float(len(swap_sys.get_active_system().history)) / loop_count
+
 	best_lists[problem_name] = best_list
 	step_lists[problem_name] = step_list
 
@@ -199,7 +244,7 @@ method_names = list(list(best_lists.values())[0].keys())
 
 print("loop", loop_count)
 
-print("|", end = "")
+print("||", end = "")
 for method_name in method_names:
 	print(method_name, "|", end = "")
 print()
