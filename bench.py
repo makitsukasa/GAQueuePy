@@ -63,7 +63,7 @@ def pick_elites(sys, count):
 	sys.history.sort(key = lambda i : i.fitness)
 	return sys.history[:count]
 
-def choose_population_throw_gaq(sys):
+def choose_population_not_replaced(sys):
 	return throw_generated(sys)
 
 def choose_population_replace_parents_by_elites(sys, count):
