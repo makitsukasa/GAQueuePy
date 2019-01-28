@@ -36,21 +36,25 @@ def throw_generated(sys):
 	sys.history.sort(key = lambda i : i.birth_year)
 	return sys.history[:npop]
 
-def throw_parents(sys, count):
+def throw_random_parents(sys, count):
 	np.random.shuffle(sys.history)
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
 	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
 	ret = [i for i in initial if i.state != State.USED_IN_GAQ]
+	np.random.shuffle(parents)
 	ret.extend(parents[count:])
 	return ret
 
-def throw_loser(sys, count):
+def throw_losed_parents(sys, count):
 	np.random.shuffle(sys.history)
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
-	initial.sort(key = lambda i : i.fitness)
-	return initial[count:]
+	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
+	ret = [i for i in initial if i.state != State.USED_IN_GAQ]
+	parents.sort(key = lambda i : i.fitness)
+	ret.extend(parents[count:])
+	return ret
 
 def throw_random(sys, count):
 	np.random.shuffle(sys.history)
@@ -59,25 +63,37 @@ def throw_random(sys, count):
 	np.random.shuffle(initial)
 	return initial[count:]
 
+def throw_losed(sys, count):
+	np.random.shuffle(sys.history)
+	sys.history.sort(key = lambda i : i.birth_year)
+	initial = sys.history[:npop]
+	initial.sort(key = lambda i : i.fitness)
+	return initial[count:]
+
 def pick_elites(sys, count):
 	sys.history.sort(key = lambda i : i.fitness)
 	return sys.history[:count]
 
-def choose_population_not_replaced(sys):
+def not_replaced(sys):
 	return throw_generated(sys)
 
-def choose_population_replace_parents_by_elites(sys, count):
-	ret = throw_parents(sys, count)
+def replace_random_parents_by_elites(sys, count):
+	ret = throw_random_parents(sys, count)
 	ret.extend(pick_elites(sys, count))
 	return ret
 
-def choose_population_replace_random_by_elites(sys, count):
+def replace_losed_parents_by_elites(sys, count):
+	ret = throw_losed_parents(sys, count)
+	ret.extend(pick_elites(sys, count))
+	return ret
+
+def replace_random_by_elites(sys, count):
 	ret = throw_random(sys, count)
 	ret.extend(pick_elites(sys, count))
 	return ret
 
-def choose_population_replace_loser_by_elites(sys, count):
-	ret = throw_loser(sys, count)
+def replace_losed_by_elites(sys, count):
+	ret = throw_losed(sys, count)
 	ret.extend(pick_elites(sys, count))
 	return ret
 
@@ -91,14 +107,14 @@ npar = n + 1
 loop_count = 30
 goal = 1e-7
 problem_list = [
-	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
-	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
+	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
 for problem_info in problem_list:
@@ -136,7 +152,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = choose_population_not_replaced
+		swap_sys.to_jgg = not_replaced
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -152,39 +168,71 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
+		swap_sys.to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_parents" in histories:
-				histories["replace_parents"].append(swap_sys.get_active_system().history)
+			if "replace_random_parents" in histories:
+				histories["replace_random_parents"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_parents"] = [swap_sys.get_active_system().history]
+				histories["replace_random_parents"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_parents failed")
+			print("replace_random_parents failed")
 
 		init()
 		np.random.seed(randseed)
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
+		swap_sys.to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_parents_1/3" in histories:
-				histories["replace_parents_1/3"].append(swap_sys.get_active_system().history)
+			if "replace_random_parents_1/3" in histories:
+				histories["replace_random_parents_1/3"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_parents_1/3"] = [swap_sys.get_active_system().history]
+				histories["replace_random_parents_1/3"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_parents_1/3 failed")
+			print("replace_random_parents_1/3 failed")
 
 		init()
 		np.random.seed(randseed)
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar)
+		swap_sys.to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "replace_losed_parents" in histories:
+				histories["replace_losed_parents"].append(swap_sys.get_active_system().history)
+			else:
+				histories["replace_losed_parents"] = [swap_sys.get_active_system().history]
+		else:
+			print("replace_losed_parents failed")
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "replace_losed_parents_1/3" in histories:
+				histories["replace_losed_parents_1/3"].append(swap_sys.get_active_system().history)
+			else:
+				histories["replace_losed_parents_1/3"] = [swap_sys.get_active_system().history]
+		else:
+			print("replace_losed_parents_1/3 failed")
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.to_jgg = lambda sys : replace_random_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -200,7 +248,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar // 3)
+		swap_sys.to_jgg = lambda sys : replace_random_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -216,32 +264,32 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar)
+		swap_sys.to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_loser" in histories:
-				histories["replace_loser"].append(swap_sys.get_active_system().history)
+			if "replace_losed" in histories:
+				histories["replace_losed"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_loser"] = [swap_sys.get_active_system().history]
+				histories["replace_losed"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_loser failed")
+			print("replace_losed failed")
 
 		init()
 		np.random.seed(randseed)
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar // 3)
+		swap_sys.to_jgg = lambda sys : replace_losed_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_loser_1/3" in histories:
-				histories["replace_loser_1/3"].append(swap_sys.get_active_system().history)
+			if "replace_losed_1/3" in histories:
+				histories["replace_losed_1/3"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_loser_1/3"] = [swap_sys.get_active_system().history]
+				histories["replace_losed_1/3"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_loser_1/3 failed")
+			print("replace_losed_1/3 failed")
 
 	histories_list[problem_name] = histories
 

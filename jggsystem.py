@@ -77,7 +77,7 @@ class JGGSystem(object):
 				self.children_before_eval = crossoverer.rex(parents, self.nchi)
 				for i in self.children_before_eval:
 					i.birth_year = self.age
-		print("time is up")
+		# print("time is up")
 		return False
 
 	def get_best_individual(self):
