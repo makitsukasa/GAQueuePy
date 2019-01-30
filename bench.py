@@ -152,7 +152,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = not_replaced
+		swap_sys.choose_population_to_jgg = not_replaced
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -168,7 +168,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -184,7 +184,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -200,7 +200,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -216,7 +216,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -232,7 +232,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_random_by_elites(sys, npar)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -248,7 +248,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_random_by_elites(sys, npar // 3)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -264,7 +264,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -280,7 +280,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.to_jgg = lambda sys : replace_losed_by_elites(sys, npar // 3)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
