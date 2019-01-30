@@ -172,6 +172,22 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
+			if "replace_all_parents" in histories:
+				histories["replace_all_parents"].append(swap_sys.get_active_system().history)
+			else:
+				histories["replace_all_parents"] = [swap_sys.get_active_system().history]
+		else:
+			print("replace_all_parents failed")
+
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
 			if "replace_random_parents" in histories:
 				histories["replace_random_parents"].append(swap_sys.get_active_system().history)
 			else:
@@ -184,23 +200,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "replace_random_parents_1/3" in histories:
-				histories["replace_random_parents_1/3"].append(swap_sys.get_active_system().history)
-			else:
-				histories["replace_random_parents_1/3"] = [swap_sys.get_active_system().history]
-		else:
-			print("replace_random_parents_1/3 failed")
-
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
@@ -210,22 +210,6 @@ for problem_info in problem_list:
 				histories["replace_losed_parents"] = [swap_sys.get_active_system().history]
 		else:
 			print("replace_losed_parents failed")
-
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "replace_losed_parents_1/3" in histories:
-				histories["replace_losed_parents_1/3"].append(swap_sys.get_active_system().history)
-			else:
-				histories["replace_losed_parents_1/3"] = [swap_sys.get_active_system().history]
-		else:
-			print("replace_losed_parents_1/3 failed")
 
 		init()
 		np.random.seed(randseed)
@@ -248,22 +232,6 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar // 3)
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "replace_random_1/3" in histories:
-				histories["replace_random_1/3"].append(swap_sys.get_active_system().history)
-			else:
-				histories["replace_random_1/3"] = [swap_sys.get_active_system().history]
-		else:
-			print("replace_random_1/3 failed")
-
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
@@ -274,22 +242,6 @@ for problem_info in problem_list:
 				histories["replace_losed"] = [swap_sys.get_active_system().history]
 		else:
 			print("replace_losed failed")
-
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar // 3)
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "replace_losed_1/3" in histories:
-				histories["replace_losed_1/3"].append(swap_sys.get_active_system().history)
-			else:
-				histories["replace_losed_1/3"] = [swap_sys.get_active_system().history]
-		else:
-			print("replace_losed_1/3 failed")
 
 	histories_list[problem_name] = histories
 
