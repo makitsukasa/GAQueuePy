@@ -104,7 +104,7 @@ histories_list = {}
 
 n = 20
 npar = n + 1
-loop_count = 1
+loop_count = 30
 goal = 1e-7
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
