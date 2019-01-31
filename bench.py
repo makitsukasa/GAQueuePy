@@ -140,12 +140,12 @@ for problem_info in problem_list:
 		succeeded = jgg_sys.until_goal(goal, step_count)
 		best = jgg_sys.get_best_individual()
 		if succeeded:
-			if "jgg" in histories:
-				histories["jgg"].append(jgg_sys.history)
+			if "JGG" in histories:
+				histories["JGG"].append(jgg_sys.history)
 			else:
-				histories["jgg"] = [jgg_sys.history]
+				histories["JGG"] = [jgg_sys.history]
 		else:
-			print("jgg failed")
+			print("JGG failed")
 
 		init()
 		np.random.seed(randseed)
@@ -156,12 +156,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "not_replaced" in histories:
-				histories["not_replaced"].append(swap_sys.get_active_system().history)
+			if "$R_{入れ替えない}$" in histories:
+				histories["$R_{入れ替えない}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["not_replaced"] = [swap_sys.get_active_system().history]
+				histories["$R_{入れ替えない}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("not_replaced failed")
+			print("$R_{入れ替えない}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -172,12 +172,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_all_parents" in histories:
-				histories["replace_all_parents"].append(swap_sys.get_active_system().history)
+			if "$R_{親全部}$" in histories:
+				histories["$R_{親全部}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_all_parents"] = [swap_sys.get_active_system().history]
+				histories["$R_{親全部}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_all_parents failed")
+			print("$R_{親全部}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -188,12 +188,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_random_parents" in histories:
-				histories["replace_random_parents"].append(swap_sys.get_active_system().history)
+			if "$R_{ランダムな親}$" in histories:
+				histories["$R_{ランダムな親}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_random_parents"] = [swap_sys.get_active_system().history]
+				histories["$R_{ランダムな親}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_random_parents failed")
+			print("$R_{ランダムな親}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -204,12 +204,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_losed_parents" in histories:
-				histories["replace_losed_parents"].append(swap_sys.get_active_system().history)
+			if "$R_{劣った親}$" in histories:
+				histories["$R_{劣った親}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_losed_parents"] = [swap_sys.get_active_system().history]
+				histories["$R_{劣った親}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_losed_parents failed")
+			print("$R_{劣った親}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -220,12 +220,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_random" in histories:
-				histories["replace_random"].append(swap_sys.get_active_system().history)
+			if "$R_{ランダム}$" in histories:
+				histories["$R_{ランダム}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_random"] = [swap_sys.get_active_system().history]
+				histories["$R_{ランダム}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_random failed")
+			print("$R_{ランダム}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -236,12 +236,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "replace_losed" in histories:
-				histories["replace_losed"].append(swap_sys.get_active_system().history)
+			if "$R_{劣った}$" in histories:
+				histories["$R_{劣った}$"].append(swap_sys.get_active_system().history)
 			else:
-				histories["replace_losed"] = [swap_sys.get_active_system().history]
+				histories["$R_{劣った}$"] = [swap_sys.get_active_system().history]
 		else:
-			print("replace_losed failed")
+			print("$R_{劣った}$ failed")
 
 	histories_list[problem_name] = histories
 
@@ -249,22 +249,29 @@ print("loop", loop_count)
 
 problem_names = list(histories_list.keys())
 method_names = list(list(histories_list.values())[0].keys())
-print("||", end = "")
+print("\\begin{table}[p]\\begin{center}")
+print("\\caption{}")
+print("\\label{}")
+print("\\begin{tabular}{|l|", end = "")
+print("r|" * len(method_names), end = "")
+print("}\\hline")
+print("&", end = "")
+line = ""
 for method_name in method_names:
-	print(method_name, "|", end = "")
-print()
-print("|--:", end = "")
-for method_name in method_names:
-	print("|--:", end = "")
-print("|")
+	line += method_name + "&"
+print(line[:-1], "\\\\ \\hline")
 
 for problem_name in problem_names:
-	print(problem_name, "|", end = "")
+	print(problem_name, "&", end = "")
+	line = ""
 	for method_name in method_names:
 		# print(int(round(bests[method_name] * 100, 0)), "/",
 		# 	step_lists[problem_name][method_name], "|", end = "")
 		# print(step_lists[problem_name][method_name], "|", end = "")
 		ave_step = np.average([len(history) for history in histories_list[problem_name][method_name]])
-		print(round(ave_step), "|", end = "")
+		line += str(int(round(ave_step))) + "&"
 		# print(int(round(bests[method_name] * 100, 0)), "|", end = "")
-	print()
+	print(line[:-1], "\\\\ \\hline")
+
+print("\\end{tabular}")
+print("\\end{center}\\end{table}")
