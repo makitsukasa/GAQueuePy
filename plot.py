@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 
-# font = {"family":"Noto Sans JP Regular"}
-# mpl.rc('font', **font)
+font = {"family": "Noto Sans JP Regular"}
+mpl.rc('font', **font)
+plt.rcParams["mathtext.default"] = "regular"
 
 def plot(step_count, history, color = 'b', linestyle = '-', label = ''):
 	v = step_count // 100
