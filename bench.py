@@ -100,26 +100,26 @@ def replace_losed_by_elites(sys, count):
 def init():
 	init_rough_gmm()
 
-histories_list = {}
+steps_list = {}
 
 n = 20
 npar = n + 1
 loop_count = 30
 goal = 1e-7
 problem_list = [
-	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
-	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
+	{"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
 	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
 for problem_info in problem_list:
 
-	histories = {}
+	steps = {}
 	problem = problem_info["problem"]
 	raw_problem = problem_info["problem"]
 	problem_name = problem_info["problem_name"]
@@ -140,10 +140,10 @@ for problem_info in problem_list:
 		succeeded = jgg_sys.until_goal(goal, step_count)
 		best = jgg_sys.get_best_individual()
 		if succeeded:
-			if "JGG" in histories:
-				histories["JGG"].append(jgg_sys.history)
+			if "JGG" in steps:
+				steps["JGG"].append(len(jgg_sys.history))
 			else:
-				histories["JGG"] = [jgg_sys.history]
+				steps["JGG"] = [len(jgg_sys.history)]
 		else:
 			print("JGG failed")
 
@@ -156,10 +156,10 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{入れ替えない}$" in histories:
-				histories["$R_{入れ替えない}$"].append(swap_sys.get_active_system().history)
+			if "$R_{入れ替えない}$" in steps:
+				steps["$R_{入れ替えない}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{入れ替えない}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{入れ替えない}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{入れ替えない}$ failed")
 
@@ -172,10 +172,10 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{親全部}$" in histories:
-				histories["$R_{親全部}$"].append(swap_sys.get_active_system().history)
+			if "$R_{親全部}$" in steps:
+				steps["$R_{親全部}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{親全部}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{親全部}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{親全部}$ failed")
 
@@ -188,10 +188,10 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{ランダムな親}$" in histories:
-				histories["$R_{ランダムな親}$"].append(swap_sys.get_active_system().history)
+			if "$R_{ランダムな親}$" in steps:
+				steps["$R_{ランダムな親}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{ランダムな親}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{ランダムな親}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{ランダムな親}$ failed")
 
@@ -204,10 +204,10 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{劣った親}$" in histories:
-				histories["$R_{劣った親}$"].append(swap_sys.get_active_system().history)
+			if "$R_{劣った親}$" in steps:
+				steps["$R_{劣った親}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{劣った親}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{劣った親}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{劣った親}$ failed")
 
@@ -220,10 +220,10 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{ランダム}$" in histories:
-				histories["$R_{ランダム}$"].append(swap_sys.get_active_system().history)
+			if "$R_{ランダム}$" in steps:
+				steps["$R_{ランダム}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{ランダム}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{ランダム}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{ランダム}$ failed")
 
@@ -236,19 +236,19 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{劣った}$" in histories:
-				histories["$R_{劣った}$"].append(swap_sys.get_active_system().history)
+			if "$R_{劣った}$" in steps:
+				steps["$R_{劣った}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				histories["$R_{劣った}$"] = [swap_sys.get_active_system().history]
+				steps["$R_{劣った}$"] = [len(swap_sys.get_active_system().history)]
 		else:
 			print("$R_{劣った}$ failed")
 
-	histories_list[problem_name] = histories
+	steps_list[problem_name] = steps
 
 print("loop", loop_count)
 
-problem_names = list(histories_list.keys())
-method_names = list(list(histories_list.values())[0].keys())
+problem_names = list(steps_list.keys())
+method_names = list(list(steps_list.values())[0].keys())
 print("\\begin{table}[p]\\begin{center}")
 print("\\caption{}")
 print("\\label{}")
@@ -268,7 +268,7 @@ for problem_name in problem_names:
 		# print(int(round(bests[method_name] * 100, 0)), "/",
 		# 	step_lists[problem_name][method_name], "|", end = "")
 		# print(step_lists[problem_name][method_name], "|", end = "")
-		ave_step = np.average([len(history) for history in histories_list[problem_name][method_name]])
+		ave_step = np.average([step for step in steps_list[problem_name][method_name]])
 		line += str(int(round(ave_step))) + "&"
 		# print(int(round(bests[method_name] * 100, 0)), "|", end = "")
 	print(line[:-1], "\\\\ \\hline")
