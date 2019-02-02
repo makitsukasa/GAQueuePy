@@ -117,7 +117,8 @@ npop = problem_info["npop"]
 npar = n + 1
 nchi = problem_info["nchi"]
 goal = 1e-7
-step_count = 100 * n
+# step_count = 100 * n
+step_count = 300000
 loop_count = 1
 problem = problem_info["problem"]
 raw_problem = problem_info["problem"]
@@ -231,7 +232,7 @@ if loop_count == 1:
 	for method_name in histories.keys():
 		his = histories[method_name][0]
 		plot(len(his), his, color = color_dict[method_name], label = method_name)
-	# plt.axis(xmin = 0, ymin = 0)
+	plt.axis(xmin = 0, ymin = 0)
 	plt.title(title)
 	plt.legend()
 	plt.show()
