@@ -233,6 +233,8 @@ if loop_count == 1:
 		his = histories[method_name][0]
 		plot(len(his), his, color = color_dict[method_name], label = method_name)
 	plt.axis(xmin = 0, ymin = 0)
-	plt.title(title)
+	# plt.title(title)
+	plt.xlabel("目的関数の評価回数")
+	plt.ylabel("目的関数の評価値")
 	plt.legend()
 	plt.show()
