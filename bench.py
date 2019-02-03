@@ -54,24 +54,24 @@ def init():
 best_lists = {}
 step_lists = {}
 league = {}
-for team in ["jgg", "throw", "replace"]:
+for team in ["$R_{入れ替えない}$", "$R_{ランダムな親}$"]:
 	league[team] = {}
-	for enem in ["jgg", "throw", "replace"]:
+	for enem in ["$R_{入れ替えない}$", "$R_{ランダムな親}$"]:
 		league[team][enem] = 0
 
 n = 20
 npar = n + 1
-loop_count = 50
+loop_count = 30
 goal = 1e-7
 problem_list = [
-	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# # {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# # {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
-	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
+	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
 for problem_info in problem_list:
@@ -95,32 +95,19 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
-		jgg_sys.until_goal(goal, step_count)
-		best = jgg_sys.get_best_individual()
-		if "jgg" in best_list:
-			best_list["jgg"] += best.raw_fitness / loop_count
-			step_list["jgg"] += float(len(jgg_sys.history)) / loop_count
-		else:
-			best_list["jgg"] = best.raw_fitness / loop_count
-			step_list["jgg"] = float(len(jgg_sys.history)) / loop_count
-		league_score["jgg"] = len(jgg_sys.history)
-
-		init()
-		np.random.seed(randseed)
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = choose_population_throw_gaq
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
-		if "throw" in best_list:
-			best_list["throw"] += best.raw_fitness / loop_count
-			step_list["throw"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		if "$R_{入れ替えない}$" in best_list:
+			best_list["$R_{入れ替えない}$"] += best.raw_fitness / loop_count
+			step_list["$R_{入れ替えない}$"] += float(len(swap_sys.get_active_system().history)) / loop_count
 		else:
-			best_list["throw"] = best.raw_fitness / loop_count
-			step_list["throw"] = float(len(swap_sys.get_active_system().history)) / loop_count
-		league_score["throw"] = len(swap_sys.get_active_system().history)
+			best_list["$R_{入れ替えない}$"] = best.raw_fitness / loop_count
+			step_list["$R_{入れ替えない}$"] = float(len(swap_sys.get_active_system().history)) / loop_count
+		league_score["$R_{入れ替えない}$"] = len(swap_sys.get_active_system().history)
 
 		init()
 		np.random.seed(randseed)
@@ -130,13 +117,13 @@ for problem_info in problem_list:
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
-		if "replace" in best_list:
-			best_list["replace"] += best.raw_fitness / loop_count
-			step_list["replace"] += float(len(swap_sys.get_active_system().history)) / loop_count
+		if "$R_{ランダムな親}$" in best_list:
+			best_list["$R_{ランダムな親}$"] += best.raw_fitness / loop_count
+			step_list["$R_{ランダムな親}$"] += float(len(swap_sys.get_active_system().history)) / loop_count
 		else:
-			best_list["replace"] = best.raw_fitness / loop_count
-			step_list["replace"] = float(len(swap_sys.get_active_system().history)) / loop_count
-		league_score["replace"] = len(swap_sys.get_active_system().history)
+			best_list["$R_{ランダムな親}$"] = best.raw_fitness / loop_count
+			step_list["$R_{ランダムな親}$"] = float(len(swap_sys.get_active_system().history)) / loop_count
+		league_score["$R_{ランダムな親}$"] = len(swap_sys.get_active_system().history)
 
 		for team in league_score:
 			for enem in league_score:
