@@ -32,20 +32,30 @@ def gaq_op_plain_origopt(x):
 		p.state = State.USED_IN_GAQ
 	return crossoverer.rex(parents)
 
-def choose_population_throw_gaq(sys):
+def throw_generated(sys):
 	sys.history.sort(key = lambda i : i.birth_year)
 	return sys.history[:npop]
 
-def choose_population_replace_parents_by_elites(sys, elites_count):
+def throw_random_parents(sys, count):
 	np.random.shuffle(sys.history)
 	sys.history.sort(key = lambda i : i.birth_year)
 	initial = sys.history[:npop]
 	parents = [i for i in initial if i.state == State.USED_IN_GAQ]
-	unmarried = [i for i in initial if i.state != State.USED_IN_GAQ]
-	ret = unmarried
-	ret.extend(parents[elites_count:])
+	ret = [i for i in initial if i.state != State.USED_IN_GAQ]
+	np.random.shuffle(parents)
+	ret.extend(parents[count:])
+	return ret
+
+def pick_elites(sys, count):
 	sys.history.sort(key = lambda i : i.fitness)
-	ret.extend(sys.history[:elites_count])
+	return sys.history[:count]
+
+def not_replaced(sys):
+	return throw_generated(sys)
+
+def replace_random_parents_by_elites(sys, count):
+	ret = throw_random_parents(sys, count)
+	ret.extend(pick_elites(sys, count))
 	return ret
 
 def init():
@@ -64,14 +74,14 @@ npar = n + 1
 loop_count = 30
 goal = 1e-7
 problem_list = [
-	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# # {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# # {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
-	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
+	{"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
 for problem_info in problem_list:
@@ -98,7 +108,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = choose_population_throw_gaq
+		swap_sys.choose_population_to_jgg = not_replaced
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if "$R_{入れ替えない}$" in best_list:
@@ -114,7 +124,7 @@ for problem_info in problem_list:
 		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
 		swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if "$R_{ランダムな親}$" in best_list:
