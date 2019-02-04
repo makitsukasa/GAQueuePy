@@ -104,21 +104,21 @@ def init():
 
 n = 20
 
-problem_info = {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n}
+# problem_info = {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6* n}
 # problem_info = {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 *n}
 # problem_info = {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n}
 # problem_info = {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n}
-# problem_info = {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8* n}
+problem_info = {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8* n}
 # problem_info = {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n}
 
 npop = problem_info["npop"]
 npar = n + 1
 nchi = problem_info["nchi"]
 goal = 1e-7
-# step_count = 100 * n
-step_count = 300000
+step_count = 300 * n
+# step_count = 300000
 loop_count = 1
 problem = problem_info["problem"]
 raw_problem = problem_info["problem"]
@@ -149,10 +149,10 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = not_replaced
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{入れ替えない}$" in histories:
-		histories["$R_{入れ替えない}$"].append(swap_sys.get_active_system().history)
+	if "$R_{入替無}$" in histories:
+		histories["$R_{入替無}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{入れ替えない}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{入替無}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -162,10 +162,10 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{親全部}$" in histories:
-		histories["$R_{親全部}$"].append(swap_sys.get_active_system().history)
+	if "$R_{全部}$" in histories:
+		histories["$R_{全部}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{親全部}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{全部}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -175,10 +175,10 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{ランダムな親}$" in histories:
-		histories["$R_{ランダムな親}$"].append(swap_sys.get_active_system().history)
+	if "$R_{ラ親}$" in histories:
+		histories["$R_{ラ親}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{ランダムな親}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{ラ親}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -188,10 +188,10 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{劣った親}$" in histories:
-		histories["$R_{劣った親}$"].append(swap_sys.get_active_system().history)
+	if "$R_{劣親}$" in histories:
+		histories["$R_{劣親}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{劣った親}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{劣親}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -201,10 +201,10 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{ランダム}$" in histories:
-		histories["$R_{ランダム}$"].append(swap_sys.get_active_system().history)
+	if "$R_{ラ}$" in histories:
+		histories["$R_{ラ}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{ランダム}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{ラ}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -214,20 +214,20 @@ for _ in range(loop_count):
 	swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
 	succeeded = swap_sys.until_goal(goal, step_count)
 	best = swap_sys.get_best_individual()
-	if "$R_{劣った}$" in histories:
-		histories["$R_{劣った}$"].append(swap_sys.get_active_system().history)
+	if "$R_{劣}$" in histories:
+		histories["$R_{劣}$"].append(swap_sys.get_active_system().history)
 	else:
-		histories["$R_{劣った}$"] = [swap_sys.get_active_system().history]
+		histories["$R_{劣}$"] = [swap_sys.get_active_system().history]
 
 if loop_count == 1:
 	color_dict = {
 		"JGG" : "r",
-		"$R_{入れ替えない}$" : "gray",
-		"$R_{親全部}$" : "yellow",
-		"$R_{ランダムな親}$" : "orange",
-		"$R_{劣った親}$" : "yellowgreen",
-		"$R_{ランダム}$" : "b",
-		"$R_{劣った}$" : "green",
+		"$R_{入替無}$" : "gray",
+		"$R_{全部}$" : "yellow",
+		"$R_{ラ親}$" : "orange",
+		"$R_{劣親}$" : "yellowgreen",
+		"$R_{ラ}$" : "b",
+		"$R_{劣}$" : "green",
 	}
 	for method_name in histories.keys():
 		his = histories[method_name][0]
