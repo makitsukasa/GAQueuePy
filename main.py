@@ -110,14 +110,14 @@ n = 20
 # problem_info = {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n}
 # problem_info = {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n}
-problem_info = {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8* n}
-# problem_info = {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n}
+# problem_info = {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8* n}
+problem_info = {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n}
 
 npop = problem_info["npop"]
 npar = n + 1
 nchi = problem_info["nchi"]
 goal = 1e-7
-step_count = 300 * n
+step_count = 100 * n
 # step_count = 300000
 loop_count = 1
 problem = problem_info["problem"]
@@ -235,6 +235,6 @@ if loop_count == 1:
 	plt.axis(xmin = 0, ymin = 0)
 	# plt.title(title)
 	plt.xlabel("目的関数の評価回数")
-	plt.ylabel("目的関数の評価値")
+	plt.ylabel("目的関数値")
 	plt.legend()
 	plt.show()
