@@ -109,11 +109,11 @@ goal = 1e-7
 problem_list = [
 	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
+	{"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
-	{"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
+	# {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8 * n},
 	# {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n},
 ]
 
@@ -156,12 +156,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{入れ替えない}$" in steps:
-				steps["$R_{入れ替えない}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{入替無}$" in steps:
+				steps["$R_{入替無}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{入れ替えない}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{入替無}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{入れ替えない}$ failed")
+			print("$R_{入替無}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -172,12 +172,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{親全部}$" in steps:
-				steps["$R_{親全部}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{全部}$" in steps:
+				steps["$R_{全部}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{親全部}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{全部}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{親全部}$ failed")
+			print("$R_{全部}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -188,12 +188,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{ランダムな親}$" in steps:
-				steps["$R_{ランダムな親}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{ラ親}$" in steps:
+				steps["$R_{ラ親}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{ランダムな親}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{ラ親}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{ランダムな親}$ failed")
+			print("$R_{ラ親}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -204,12 +204,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{劣った親}$" in steps:
-				steps["$R_{劣った親}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{劣親}$" in steps:
+				steps["$R_{劣親}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{劣った親}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{劣親}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{劣った親}$ failed")
+			print("$R_{劣親}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -220,12 +220,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{ランダム}$" in steps:
-				steps["$R_{ランダム}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{ラ}$" in steps:
+				steps["$R_{ラ}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{ランダム}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{ラ}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{ランダム}$ failed")
+			print("$R_{ラ}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -236,12 +236,12 @@ for problem_info in problem_list:
 		succeeded = swap_sys.until_goal(goal, step_count)
 		best = swap_sys.get_best_individual()
 		if succeeded:
-			if "$R_{劣った}$" in steps:
-				steps["$R_{劣った}$"].append(len(swap_sys.get_active_system().history))
+			if "$R_{劣}$" in steps:
+				steps["$R_{劣}$"].append(len(swap_sys.get_active_system().history))
 			else:
-				steps["$R_{劣った}$"] = [len(swap_sys.get_active_system().history)]
+				steps["$R_{劣}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{劣った}$ failed")
+			print("$R_{劣}$ failed")
 
 	steps_list[problem_name] = steps
 
