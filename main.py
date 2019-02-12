@@ -106,12 +106,12 @@ n = 20
 
 # problem_info = {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6* n}
-# problem_info = {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 *n}
+problem_info = {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 *n}
 # problem_info = {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n}
 # problem_info = {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "schaffer", "problem" : schaffer, "step" : 229000, "npop" : 10 * n, "nchi" : 8* n}
-problem_info = {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n}
+# problem_info = {"problem_name" : "rastrigin", "problem" : rastrigin, "step" : 220000, "npop" : 24 * n, "nchi" : 8 * n}
 
 npop = problem_info["npop"]
 npar = n + 1
@@ -180,18 +180,18 @@ for _ in range(loop_count):
 	else:
 		histories["$R_{ラ親}$"] = [swap_sys.get_active_system().history]
 
-	init()
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
-	succeeded = swap_sys.until_goal(goal, step_count)
-	best = swap_sys.get_best_individual()
-	if "$R_{劣親}$" in histories:
-		histories["$R_{劣親}$"].append(swap_sys.get_active_system().history)
-	else:
-		histories["$R_{劣親}$"] = [swap_sys.get_active_system().history]
+	# init()
+	# np.random.seed(randseed)
+	# swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+	# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	# swap_sys.switch_to_gaq = lambda sys : False
+	# swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
+	# succeeded = swap_sys.until_goal(goal, step_count)
+	# best = swap_sys.get_best_individual()
+	# if "$R_{劣親}$" in histories:
+	# 	histories["$R_{劣親}$"].append(swap_sys.get_active_system().history)
+	# else:
+	# 	histories["$R_{劣親}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -206,18 +206,18 @@ for _ in range(loop_count):
 	else:
 		histories["$R_{ラ}$"] = [swap_sys.get_active_system().history]
 
-	init()
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
-	succeeded = swap_sys.until_goal(goal, step_count)
-	best = swap_sys.get_best_individual()
-	if "$R_{劣}$" in histories:
-		histories["$R_{劣}$"].append(swap_sys.get_active_system().history)
-	else:
-		histories["$R_{劣}$"] = [swap_sys.get_active_system().history]
+	# init()
+	# np.random.seed(randseed)
+	# swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+	# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	# swap_sys.switch_to_gaq = lambda sys : False
+	# swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
+	# succeeded = swap_sys.until_goal(goal, step_count)
+	# best = swap_sys.get_best_individual()
+	# if "$R_{劣}$" in histories:
+	# 	histories["$R_{劣}$"].append(swap_sys.get_active_system().history)
+	# else:
+	# 	histories["$R_{劣}$"] = [swap_sys.get_active_system().history]
 
 if loop_count == 1:
 	color_dict = {
