@@ -6,7 +6,7 @@ from gaqsystem import GAQSystem
 
 fitness_history = []
 
-def is_stucked(x):
+def is_stucked(x, t = 10e-7):
 	global fitness_history
 	delay = 2
 
@@ -22,7 +22,7 @@ def is_stucked(x):
 	for n in range(delay):
 		diff_init_rec = fitness_history[0] - fitness_history[-1 - n]
 		diff_rec_rec = fitness_history[-2 - n] - fitness_history[-1 - n]
-		if diff_init_rec != 0 and abs(diff_rec_rec / diff_init_rec) >= 0.000001:
+		if diff_init_rec != 0 and abs(diff_rec_rec / diff_init_rec) >= t:
 			return False
 
 	return True
@@ -33,7 +33,7 @@ def gaq_op_plain_origopt(x):
 	return crossoverer.rex(x[:n + 1])
 
 class SwapSystem(object):
-	def __init__(self, problem, raw_problem, n, npop, npar, nchi):
+	def __init__(self, problem, raw_problem, t, n, npop, npar, nchi):
 		global fitness_history
 		fitness_history.clear()
 		self.n = n

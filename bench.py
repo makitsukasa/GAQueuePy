@@ -104,12 +104,12 @@ steps_list = {}
 
 n = 20
 npar = n + 1
-loop_count = 30
+loop_count = 1
 goal = 1e-7
 problem_list = [
-	# {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
+	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
-	{"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
+	# {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 * n},
 	# {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n},
 	# {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n},
 	# {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n},
@@ -129,6 +129,7 @@ for problem_info in problem_list:
 	# step_count = problem_info["step"] // 10
 	# step_count = 100 * n
 	step_count = 300000
+	t = 10e-7
 	print(problem_name, "step:", step_count)
 
 	for _ in range(loop_count):
@@ -149,7 +150,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = not_replaced
@@ -165,7 +166,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
@@ -181,7 +182,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
@@ -197,7 +198,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
@@ -213,7 +214,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
@@ -229,7 +230,7 @@ for problem_info in problem_list:
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)

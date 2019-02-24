@@ -93,6 +93,7 @@ npar = n + 1
 nchi = 6 * n
 goal = 1e-7
 step_count = 300000
+t = 10e-7
 loop_count = 1
 problem = sphere
 raw_problem = sphere
@@ -120,7 +121,7 @@ for _ in range(loop_count):
 				color = 'r', label = 'JGG : {}'.format(len(jgg_sys.history)))
 
 	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+	swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 	swap_sys.gaq_sys.op = gaq_op_plain_origopt
 	swap_sys.switch_to_gaq = lambda sys : False
 	swap_sys.choose_population_to_jgg = choose_population_throw_gaq
@@ -138,7 +139,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar)
@@ -156,7 +157,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_parents_by_elites(sys, npar // 3)
@@ -174,7 +175,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar)
@@ -192,7 +193,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_random_by_elites(sys, npar // 3)
@@ -210,7 +211,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar)
@@ -228,7 +229,7 @@ for _ in range(loop_count):
 
 		init()
 		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, n, npop, npar, nchi)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : choose_population_replace_loser_by_elites(sys, npar // 3)
