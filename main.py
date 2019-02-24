@@ -104,9 +104,9 @@ def init():
 
 n = 20
 
-# problem_info = {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n}
+problem_info = {"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ellipsoid", "problem" : ellipsoid, "step" : 33800, "npop" : 6 * n, "nchi" : 6* n}
-problem_info = {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 *n}
+# problem_info = {"problem_name" : "k-tablet", "problem" : ktablet, "step" : 48000, "npop" : 8 * n, "nchi" : 6 *n}
 # problem_info = {"problem_name" : "rosenbrock", "problem" : rosenbrock, "step" : 157000, "npop" : 15 * n, "nchi" : 8 * n}
 # problem_info = {"problem_name" : "bohachevsky", "problem" : bohachevsky, "step" : 33800, "npop" : 6 * n, "nchi" : 6 * n}
 # problem_info = {"problem_name" : "ackley", "problem" : ackley, "step" : 55400, "npop" : 8 * n, "nchi" : 6 * n}
@@ -225,9 +225,9 @@ if loop_count == 1:
 		"$R_{入替無}$" : "gray",
 		"$R_{全部}$" : "yellow",
 		"$R_{ラ親}$" : "orange",
-		"$R_{劣親}$" : "yellowgreen",
+		# "$R_{劣親}$" : "yellowgreen",
 		"$R_{ラ}$" : "b",
-		"$R_{劣}$" : "green",
+		# "$R_{劣}$" : "green",
 	}
 	for method_name in histories.keys():
 		his = histories[method_name][0]
