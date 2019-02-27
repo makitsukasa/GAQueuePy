@@ -6,7 +6,7 @@ from gaqsystem import GAQSystem
 
 fitness_history = []
 
-def is_stucked(x, t = 10e-7):
+def is_stucked(x, t = 1e-7):
 	global fitness_history
 	delay = 2
 
@@ -36,6 +36,7 @@ class SwapSystem(object):
 	def __init__(self, problem, raw_problem, t, n, npop, npar, nchi):
 		global fitness_history
 		fitness_history.clear()
+		self.t = t
 		self.n = n
 		self.problem = problem
 		self.npop = npop
@@ -60,10 +61,10 @@ class SwapSystem(object):
 			return self.jgg_sys
 
 	def switch_to_gaq(self, gaq_sys):
-		return is_stucked(gaq_sys.history)
+		return is_stucked(gaq_sys.history, self.t)
 
 	def switch_to_jgg(self, jgg_sys):
-		return is_stucked(jgg_sys.history)
+		return is_stucked(jgg_sys.history, self.t)
 
 	def choose_population_to_jgg(self, gaq_sys):
 		np.random.shuffle(gaq_sys.history)
