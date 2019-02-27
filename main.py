@@ -118,12 +118,13 @@ npar = n + 1
 nchi = problem_info["nchi"]
 goal = 1e-7
 step_count = 100 * n
-t = 1e-1
+t = 1e-4
 loop_count = 1
 problem = problem_info["problem"]
 raw_problem = problem_info["problem"]
-title = '{f}(D{d}), pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
-	f = problem.__name__, d = n, npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
+title = '{f}(D{d}), t{t},pop{npop},par{npar},chi{nchi},step{s},loop{l}'.format(
+	f = problem.__name__, d = n, t = t,
+	npop = npop, npar = npar, nchi = nchi, s = step_count, l = loop_count)
 histories = {}
 
 print(title)
@@ -154,18 +155,18 @@ for _ in range(loop_count):
 	else:
 		histories["$R_{入替無}$"] = [swap_sys.get_active_system().history]
 
-	init()
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
-	succeeded = swap_sys.until_goal(goal, step_count)
-	best = swap_sys.get_best_individual()
-	if "$R_{全部}$" in histories:
-		histories["$R_{全部}$"].append(swap_sys.get_active_system().history)
-	else:
-		histories["$R_{全部}$"] = [swap_sys.get_active_system().history]
+	# init()
+	# np.random.seed(randseed)
+	# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+	# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	# swap_sys.switch_to_gaq = lambda sys : False
+	# swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
+	# succeeded = swap_sys.until_goal(goal, step_count)
+	# best = swap_sys.get_best_individual()
+	# if "$R_{全部}$" in histories:
+	# 	histories["$R_{全部}$"].append(swap_sys.get_active_system().history)
+	# else:
+	# 	histories["$R_{全部}$"] = [swap_sys.get_active_system().history]
 
 	init()
 	np.random.seed(randseed)
@@ -193,18 +194,18 @@ for _ in range(loop_count):
 	# else:
 	# 	histories["$R_{劣親}$"] = [swap_sys.get_active_system().history]
 
-	init()
-	np.random.seed(randseed)
-	swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-	swap_sys.gaq_sys.op = gaq_op_plain_origopt
-	swap_sys.switch_to_gaq = lambda sys : False
-	swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
-	succeeded = swap_sys.until_goal(goal, step_count)
-	best = swap_sys.get_best_individual()
-	if "$R_{ラ}$" in histories:
-		histories["$R_{ラ}$"].append(swap_sys.get_active_system().history)
-	else:
-		histories["$R_{ラ}$"] = [swap_sys.get_active_system().history]
+	# init()
+	# np.random.seed(randseed)
+	# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+	# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+	# swap_sys.switch_to_gaq = lambda sys : False
+	# swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
+	# succeeded = swap_sys.until_goal(goal, step_count)
+	# best = swap_sys.get_best_individual()
+	# if "$R_{ラ}$" in histories:
+	# 	histories["$R_{ラ}$"].append(swap_sys.get_active_system().history)
+	# else:
+	# 	histories["$R_{ラ}$"] = [swap_sys.get_active_system().history]
 
 	# init()
 	# np.random.seed(randseed)
@@ -233,7 +234,7 @@ if loop_count == 1:
 		his = histories[method_name][0]
 		plot(len(his), his, color = color_dict[method_name], label = method_name)
 	plt.axis(xmin = 0, ymin = 0)
-	# plt.title(title)
+	plt.title(title)
 	plt.xlabel("目的関数の評価回数", fontsize = 14)
 	plt.ylabel("目的関数値", fontsize = 14)
 	plt.tick_params(labelsize = 14)
