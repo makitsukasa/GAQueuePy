@@ -164,21 +164,21 @@ for problem_info in problem_list:
 		else:
 			print("$R_{入替無}$ failed")
 
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "$R_{全部}$" in steps:
-				steps["$R_{全部}$"].append(len(swap_sys.get_active_system().history))
-			else:
-				steps["$R_{全部}$"] = [len(swap_sys.get_active_system().history)]
-		else:
-			print("$R_{全部}$ failed")
+		# init()
+		# np.random.seed(randseed)
+		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		# swap_sys.switch_to_gaq = lambda sys : False
+		# swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
+		# succeeded = swap_sys.until_goal(goal, step_count)
+		# best = swap_sys.get_best_individual()
+		# if succeeded:
+		# 	if "$R_{全部}$" in steps:
+		# 		steps["$R_{全部}$"].append(len(swap_sys.get_active_system().history))
+		# 	else:
+		# 		steps["$R_{全部}$"] = [len(swap_sys.get_active_system().history)]
+		# else:
+		# 	print("$R_{全部}$ failed")
 
 		init()
 		np.random.seed(randseed)
@@ -270,7 +270,8 @@ for problem_name in problem_names:
 		# 	step_lists[problem_name][method_name], "|", end = "")
 		# print(step_lists[problem_name][method_name], "|", end = "")
 		ave_step = np.average([step for step in steps_list[problem_name][method_name]])
-		line += str(int(round(ave_step))) + "&"
+		med_step = np.median([step for step in steps_list[problem_name][method_name]])
+		line += str(int(round(ave_step))) + "," + str(int(round(med_step))) + "&"
 		# print(int(round(bests[method_name] * 100, 0)), "|", end = "")
 	print(line[:-1], "\\\\ \\hline")
 
