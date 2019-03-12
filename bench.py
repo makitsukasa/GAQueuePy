@@ -180,69 +180,69 @@ for problem_info in problem_list:
 		else:
 			print("$R_{全部}$ failed", randseed)
 
-		# init()
-		# np.random.seed(randseed)
-		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		# swap_sys.switch_to_gaq = lambda sys : False
-		# swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
-		# succeeded = swap_sys.until_goal(goal, step_count)
-		# best = swap_sys.get_best_individual()
-		# if succeeded:
-		# 	if "$R_{ラ親}$" in steps:
-		# 		steps["$R_{ラ親}$"].append(len(swap_sys.get_active_system().history))
-		# 	else:
-		# 		steps["$R_{ラ親}$"] = [len(swap_sys.get_active_system().history)]
-		# else:
-		# 	print("$R_{ラ親}$ failed")
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar // 3)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "$R_{ラ親}$" in steps:
+				steps["$R_{ラ親}$"].append(len(swap_sys.get_active_system().history))
+			else:
+				steps["$R_{ラ親}$"] = [len(swap_sys.get_active_system().history)]
+		else:
+			print("$R_{ラ親}$ failed")
 
-		# init()
-		# np.random.seed(randseed)
-		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		# swap_sys.switch_to_gaq = lambda sys : False
-		# swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
-		# succeeded = swap_sys.until_goal(goal, step_count)
-		# best = swap_sys.get_best_individual()
-		# if succeeded:
-		# 	if "$R_{劣親}$" in steps:
-		# 		steps["$R_{劣親}$"].append(len(swap_sys.get_active_system().history))
-		# 	else:
-		# 		steps["$R_{劣親}$"] = [len(swap_sys.get_active_system().history)]
-		# else:
-		# 	print("$R_{劣親}$ failed")
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_parents_by_elites(sys, npar // 3)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "$R_{劣親}$" in steps:
+				steps["$R_{劣親}$"].append(len(swap_sys.get_active_system().history))
+			else:
+				steps["$R_{劣親}$"] = [len(swap_sys.get_active_system().history)]
+		else:
+			print("$R_{劣親}$ failed")
 
-		# init()
-		# np.random.seed(randseed)
-		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		# swap_sys.switch_to_gaq = lambda sys : False
-		# swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
-		# succeeded = swap_sys.until_goal(goal, step_count)
-		# best = swap_sys.get_best_individual()
-		# if succeeded:
-		# 	if "$R_{ラ}$" in steps:
-		# 		steps["$R_{ラ}$"].append(len(swap_sys.get_active_system().history))
-		# 	else:
-		# 		steps["$R_{ラ}$"] = [len(swap_sys.get_active_system().history)]
-		# else:
-		# 	print("$R_{ラ}$ failed")
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : replace_random_by_elites(sys, npar)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "$R_{ラ}$" in steps:
+				steps["$R_{ラ}$"].append(len(swap_sys.get_active_system().history))
+			else:
+				steps["$R_{ラ}$"] = [len(swap_sys.get_active_system().history)]
+		else:
+			print("$R_{ラ}$ failed")
 
-		# init()
-		# np.random.seed(randseed)
-		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		# swap_sys.switch_to_gaq = lambda sys : False
-		# swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
-		# succeeded = swap_sys.until_goal(goal, step_count)
-		# best = swap_sys.get_best_individual()
-		# if succeeded:
-		# 	if "$R_{劣}$" in steps:
-		# 		steps["$R_{劣}$"].append(len(swap_sys.get_active_system().history))
-		# 	else:
-		# 		steps["$R_{劣}$"] = [len(swap_sys.get_active_system().history)]
-		# else:
-		# 	print("$R_{劣}$ failed")
+		init()
+		np.random.seed(randseed)
+		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		swap_sys.switch_to_gaq = lambda sys : False
+		swap_sys.choose_population_to_jgg = lambda sys : replace_losed_by_elites(sys, npar)
+		succeeded = swap_sys.until_goal(goal, step_count)
+		best = swap_sys.get_best_individual()
+		if succeeded:
+			if "$R_{劣}$" in steps:
+				steps["$R_{劣}$"].append(len(swap_sys.get_active_system().history))
+			else:
+				steps["$R_{劣}$"] = [len(swap_sys.get_active_system().history)]
+		else:
+			print("$R_{劣}$ failed")
 
 	steps_list[problem_name] = steps
 

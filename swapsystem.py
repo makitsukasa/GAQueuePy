@@ -4,26 +4,34 @@ import crossoverer
 from jggsystem import JGGSystem
 from gaqsystem import GAQSystem
 
-fitness_history = []
-
 def is_stucked(x, t = 1e-7):
-	global fitness_history
-	delay = 2
-
 	clone = x[:]
+	clone.sort(key = lambda i: i.birth_year)
+	oldest_birth_year = clone[0].birth_year
 	clone.sort(key = lambda i: -i.birth_year)
 	most_recent_birth_year = clone[0].birth_year
-	most_recent_pop = [i for i in x if i.birth_year == most_recent_birth_year]
-	fitness_history.append(np.average([i.fitness for i in most_recent_pop]))
-
-	if len(fitness_history) < delay + 1:
+	for i in clone:
+		if i.birth_year == most_recent_birth_year:
+			continue
+		second_recent_birth_year = i.birth_year
+		break
+	if not "second_recent_birth_year" in locals():
+		return False
+	if oldest_birth_year == second_recent_birth_year:
 		return False
 
-	for n in range(delay):
-		diff_init_rec = fitness_history[0] - fitness_history[-1 - n]
-		diff_rec_rec = fitness_history[-2 - n] - fitness_history[-1 - n]
-		if diff_init_rec != 0 and abs(diff_rec_rec / diff_init_rec) >= t:
-			return False
+	init_pop = [i for i in x if i.birth_year == oldest_birth_year]
+	most_recent_pop = [i for i in x if i.birth_year == most_recent_birth_year]
+	second_recent_pop = [i for i in x if i.birth_year == second_recent_birth_year]
+
+	init_fitness = np.average([i.fitness for i in init_pop])
+	most_recent_fitness = np.average([i.fitness for i in most_recent_pop])
+	second_recent_fitness = np.average([i.fitness for i in second_recent_pop])
+
+	diff_init_rec = init_fitness - most_recent_fitness
+	diff_rec_rec = second_recent_fitness - most_recent_fitness
+	if diff_init_rec != 0 and abs(diff_rec_rec / diff_init_rec) >= t:
+		return False
 
 	return True
 
@@ -34,8 +42,6 @@ def gaq_op_plain_origopt(x):
 
 class SwapSystem(object):
 	def __init__(self, problem, raw_problem, t, n, npop, npar, nchi):
-		global fitness_history
-		fitness_history.clear()
 		self.t = t
 		self.n = n
 		self.problem = problem
@@ -71,7 +77,6 @@ class SwapSystem(object):
 		return gaq_sys.history[:self.npop]
 
 	def switch_active_system(self):
-		global fitness_history
 		if self.is_gaq_active:
 			if not self.switch_to_jgg(self.gaq_sys):
 				return
@@ -81,7 +86,6 @@ class SwapSystem(object):
 			self.jgg_sys.age = self.gaq_sys.age
 			self.jgg_sys.generate_first_children()
 			self.is_gaq_active = False
-			fitness_history.clear()
 		else:
 			if not self.switch_to_gaq(self.jgg_sys.history):
 				return
@@ -89,7 +93,6 @@ class SwapSystem(object):
 			self.gaq_sys.history = self.jgg_sys.history
 			self.gaq_sys.age = self.jgg_sys.age
 			self.is_gaq_active = True
-			fitness_history.clear()
 
 	def step(self, count = 1):
 		for _ in range(count):
