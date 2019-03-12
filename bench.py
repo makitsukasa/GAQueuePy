@@ -135,34 +135,34 @@ for problem_info in problem_list:
 	for _ in range(loop_count):
 		randseed = np.random.randint(0x7fffffff)
 
-		init()
-		np.random.seed(randseed)
-		jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
-		succeeded = jgg_sys.until_goal(goal, step_count)
-		best = jgg_sys.get_best_individual()
-		if succeeded:
-			if "JGG" in steps:
-				steps["JGG"].append(len(jgg_sys.history))
-			else:
-				steps["JGG"] = [len(jgg_sys.history)]
-		else:
-			print("JGG failed", randseed)
+		# init()
+		# np.random.seed(randseed)
+		# jgg_sys = JGGSystem(problem, raw_problem, n, npop, npar, nchi)
+		# succeeded = jgg_sys.until_goal(goal, step_count)
+		# best = jgg_sys.get_best_individual()
+		# if succeeded:
+		# 	if "JGG" in steps:
+		# 		steps["JGG"].append(len(jgg_sys.history))
+		# 	else:
+		# 		steps["JGG"] = [len(jgg_sys.history)]
+		# else:
+		# 	print("JGG failed", randseed)
 
-		init()
-		np.random.seed(randseed)
-		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
-		swap_sys.gaq_sys.op = gaq_op_plain_origopt
-		swap_sys.switch_to_gaq = lambda sys : False
-		swap_sys.choose_population_to_jgg = not_replaced
-		succeeded = swap_sys.until_goal(goal, step_count)
-		best = swap_sys.get_best_individual()
-		if succeeded:
-			if "$R_{入替無}$" in steps:
-				steps["$R_{入替無}$"].append(len(swap_sys.get_active_system().history))
-			else:
-				steps["$R_{入替無}$"] = [len(swap_sys.get_active_system().history)]
-		else:
-			print("$R_{入替無}$ failed", eandseed)
+		# init()
+		# np.random.seed(randseed)
+		# swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		# swap_sys.gaq_sys.op = gaq_op_plain_origopt
+		# swap_sys.switch_to_gaq = lambda sys : False
+		# swap_sys.choose_population_to_jgg = not_replaced
+		# succeeded = swap_sys.until_goal(goal, step_count)
+		# best = swap_sys.get_best_individual()
+		# if succeeded:
+		# 	if "$R_{入替無}$" in steps:
+		# 		steps["$R_{入替無}$"].append(len(swap_sys.get_active_system().history))
+		# 	else:
+		# 		steps["$R_{入替無}$"] = [len(swap_sys.get_active_system().history)]
+		# else:
+		# 	print("$R_{入替無}$ failed", eandseed)
 
 		init()
 		np.random.seed(randseed)
