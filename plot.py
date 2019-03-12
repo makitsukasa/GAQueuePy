@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import numpy as np
 import matplotlib as mpl
+
+available_fonts = fm.findSystemFonts()
+print(available_fonts)
 
 font = {"family": "Noto Sans JP Regular"}
 mpl.rc('font', **font)
