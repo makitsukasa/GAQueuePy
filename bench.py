@@ -104,7 +104,7 @@ steps_list = {}
 
 n = 20
 npar = n + 1
-loop_count = 30
+loop_count = 10000
 goal = 1e-7
 problem_list = [
 	{"problem_name" : "sphere", "problem" : sphere, "step" : 27200, "npop" : 6 * n, "nchi" : 6 * n},
@@ -133,7 +133,9 @@ for problem_info in problem_list:
 	print(problem_name, "step:", step_count, ",t:", t)
 
 	for _ in range(loop_count):
-		randseed = np.random.randint(0x7fffffff)
+		# randseed = 2111046736
+		# randseed = 1250332265
+		randseed = 2051133113
 
 		# init()
 		# np.random.seed(randseed)
@@ -167,6 +169,7 @@ for problem_info in problem_list:
 		init()
 		np.random.seed(randseed)
 		swap_sys = SwapSystem(problem, raw_problem, t, n, npop, npar, nchi)
+		np.random.seed()
 		swap_sys.gaq_sys.op = gaq_op_plain_origopt
 		swap_sys.switch_to_gaq = lambda sys : False
 		swap_sys.choose_population_to_jgg = lambda sys : replace_random_parents_by_elites(sys, npar)
@@ -273,6 +276,7 @@ for problem_name in problem_names:
 		med_step = np.median([step for step in steps_list[problem_name][method_name]])
 		line += str(int(round(ave_step))) + "," + str(int(round(med_step))) + "&"
 		# print(int(round(bests[method_name] * 100, 0)), "|", end = "")
+		print(loop_count - len(steps_list[problem_name][method_name]))
 	print(line[:-1], "\\\\ \\hline")
 
 print("\\end{tabular}")
