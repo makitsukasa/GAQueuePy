@@ -162,7 +162,7 @@ for problem_info in problem_list:
 			else:
 				steps["$R_{入替無}$"] = [len(swap_sys.get_active_system().history)]
 		else:
-			print("$R_{入替無}$ failed", eandseed)
+			print("$R_{入替無}$ failed", randseed)
 
 		init()
 		np.random.seed(randseed)
