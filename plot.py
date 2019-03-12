@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib as mpl
 
 available_fonts = fm.findSystemFonts()
-print(available_fonts)
+for f in available_fonts:
+	fontdata = fm.FontProperties(fname = f).get_name()
+	print(fontdata)
 
-font = {"family": "Noto Sans JP Regular"}
+font = {"family": "Noto Sans MONO CJK JP"}
 mpl.rc('font', **font)
 plt.rcParams["mathtext.default"] = "regular"
 
