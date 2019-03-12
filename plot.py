@@ -1,8 +1,14 @@
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import numpy as np
 import matplotlib as mpl
 
-font = {"family": "Noto Sans JP Regular"}
+available_fonts = fm.findSystemFonts()
+for f in available_fonts:
+	fontdata = fm.FontProperties(fname = f).get_name()
+	print(fontdata)
+
+font = {"family": "Noto Sans MONO CJK JP"}
 mpl.rc('font', **font)
 plt.rcParams["mathtext.default"] = "regular"
 
